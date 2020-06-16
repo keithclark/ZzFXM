@@ -1,0 +1,12 @@
+{
+  "name": "song-parsers",
+  "version": "1.0.0",
+  "description": "Parsers for various song formats",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "main": "index.js",
+  "author": "",
+  "license": "MIT"
+}
