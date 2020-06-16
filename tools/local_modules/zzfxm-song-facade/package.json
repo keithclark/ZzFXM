@@ -1,0 +1,12 @@
+{
+  "name": "zzfxm-song-facade",
+  "version": "1.0.0",
+  "description": "A facade for working with ZzFXM song data",
+  "main": "ZzfxmSongFacade.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Keith Clark",
+  "license": "MIT",
+  "type": "module"
+}
