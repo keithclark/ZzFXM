@@ -106,7 +106,9 @@ A ZzFXM song is a series of nested arrays containing instrument, pattern and seq
   <zzfx-sound-noise>?,
   <zzfx-sound-modulation>?,
   <zzfx-sound-bitCrush>?,
-  <zzfx-sound-delay>?
+  <zzfx-sound-delay>?,
+  <zzfx-sound-sustain-volume>?,
+  <zzfx-sound-decay>?
 ]
 ```
 
@@ -132,7 +134,8 @@ Param | Description | Default | Min Value | Max Value
 `modulation` | Frequency of modulation wave, negative flips phase (Hz) | 0 | -1000000000 | 1000000000
 `bitCrush` | Resamples at a lower frequency in (samples*100) | 0 | -1000000000 | 1000000000
 `delay` | Overlap with itself for reverb and flanger effects (seconds) | 0 | 0 | 1000000000
-
+`sustainVolume` | Volume level for sustain (percent) | 1 | -1000000000 | 1000000000
+`decay` | Decay time, how long to reach sustain after attack | 0 | 0 | 1
 
 ## Pattern List Structure
 
