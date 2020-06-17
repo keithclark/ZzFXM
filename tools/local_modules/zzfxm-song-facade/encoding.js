@@ -32,6 +32,10 @@ export const encodeInstruments = instruments => {
         else if (i == 7 && encoded == '') {
           encoded = '0';
         }
+        // zzfx defaults `sustainVolume` to `1` - we need to restore the `0`
+        else if (i == 17 && encoded == '') {
+          encoded = '0';
+        }
         return encoded;
       });
     }
