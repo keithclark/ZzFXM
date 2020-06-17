@@ -77,6 +77,7 @@ const zzfxM = (instruments, patterns, sequence, speed = 6) => {
   let channel;
   let attenuation;
   let instrument;
+  let instrumentParams;
   let period;
 
   sequence.map(patternIndex => {
@@ -109,9 +110,9 @@ const zzfxM = (instruments, patterns, sequence, speed = 6) => {
           // the current period and instrument. Without caching the browser will
           // will hang.
           if (!sampleCache[sampleCacheKey]) {
-            instrument = [...instruments[instrument - 1]];
-            instrument[2] *= 2 ** ((period - 12) / 12);
-            sampleCache[sampleCacheKey] = zzfxG(...instrument);
+            instrumentParams = [...instruments[instrument - 1]];
+            instrumentParams[2] *= 2 ** ((period - 12) / 12);
+            sampleCache[sampleCacheKey] = zzfxG(...instrumentParams);
           }
         }
 
