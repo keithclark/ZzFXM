@@ -2,7 +2,7 @@ import { setArrayLength } from './utils.js';
 import { encodeSong } from './encoding.js';
 
 
-export class ZzfmxSongFacade {
+export class ZzfxmSongFacade {
 
   constructor(data = [[],[],[], 6]) {
     this._data = data;

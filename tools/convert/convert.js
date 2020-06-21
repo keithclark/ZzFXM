@@ -1,4 +1,4 @@
-import { ZzfmxSongFacade } from 'zzfxm-song-facade';
+import { ZzfxmSongFacade } from 'zzfxm-song-facade';
 import { parseProtracker } from 'song-parsers';
 import { createInstrumentFromSample } from './lib/instrumentResolver.js';
 
@@ -8,7 +8,7 @@ const EFFECT_CODE_PATTERN_BREAK = 13;
 const EFFECT_CODE_SPEED = 15;
 
 export const convertSong = (buffer, options) => {
-  let song = new ZzfmxSongFacade();
+  let song = new ZzfxmSongFacade();
   let currentChannel = 0;
   let currentPattern = 0;
   let currentRow = 0;
