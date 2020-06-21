@@ -4,6 +4,7 @@
   "description": "",
   "type": "module",
   "main": "convert.js",
+  "bin": "./bin/zzfx-convert",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
