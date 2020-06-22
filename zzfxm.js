@@ -28,7 +28,8 @@
  * @param {Array.<Pattern>} patterns - Array of `pattern` data.
  * @param {Array.<Number>} sequence - Array of `pattern` indexes.
  * @param {Number} [speed=6] - Playback speed of the song
- * @returns {Array.<Number>} Sample data for the song
+ * @param {Array.<Number>} panning - Array of `panning` values for each channel
+ * @returns {Array.<Array.<Number>>} Sample data for the song
  *
  * @example
  * const song = zzfxM(
@@ -53,41 +54,52 @@
  *     ]
  *   ],
  *   [                                         // Sequence
- *     0,0,0,0                                   // Play pattern 0 three times
+ *     0, 0, 0, 0                                // Play pattern 0 four times
  *   ],
- *   4                                         // Playback speed 4
+ *   4,                                        // Playback speed 4
+ *   [
+ *     -1, 1                                   // Panning info. ch1=left ch2=right
+ *   ]
+ * ]
  * );
  * zzfxP(song);                                // Play the song
  */
-const zzfxM = (instruments, patterns, sequence, speed = 6) => {
+const zzfxM = (instruments, patterns, sequence, speed = 6, panning) => {
   let SAMPLE_RATE = 44100;                  // this must match ZzFX sample rate
   let BPM = 125                             // beats per min - always 125
   let ticksPerSecond = 1000 / (2500 / BPM);
   let tickRowSize = SAMPLE_RATE / (ticksPerSecond / speed) | 0;
-  let buffer = [];
   let bufferStart = 0
   let bufferPos;
   let bufferOffset;
-  let sample
+  let sample;
   let sampleCache = {};
-  let sampleCacheKey
-  let sampleByte
+  let sampleCacheKey;
+  let sampleByte;
   let sampleOffset;
   let noteIndex;
-  let channel;
+  let pan;
   let attenuation;
   let instrument;
   let instrumentParams;
   let period;
+  let leftChannelBuffer=[];
+  let rightChannelBuffer=[];
 
   sequence.map(patternIndex => {
 
     // Walk over each channel of the pattern.
-    for (channel of patterns[patternIndex]) {
+    patterns[patternIndex].map((channel, channelIndex) => {
 
       // for each channel we need to reset the buffer offset so we can layer
       // sample data.
       bufferOffset = bufferStart;
+
+      // Determin the panning value for this channel. If no panning was provided
+      // we fallback to alternating each song channel between the left and right
+      // speakers (even channel indexes will come from the left speaker, odd
+      // from the right speaker)
+      pan = panning ? .5 + (panning[channelIndex] || 0) / 2 : channelIndex & 1;
 
       // Read the channel data.
       for (noteIndex = 0; noteIndex < channel.length; bufferOffset += tickRowSize) {
@@ -114,28 +126,33 @@ const zzfxM = (instruments, patterns, sequence, speed = 6) => {
             instrumentParams[2] *= 2 ** ((period - 12) / 12);
             sampleCache[sampleCacheKey] = zzfxG(...instrumentParams);
           }
+
+          sample = sampleCache[sampleCacheKey];
         }
 
         // Update the channel attenuation value. We'll use this to control the
         // volume when rendering the sample slice for this row.
         attenuation = (channel[noteIndex++] / 64) || attenuation;
 
-        // Fill the buffer data for this channel. If there's a sample to play
-        // (a new note or the remaining sample data from the previous row),
-        // merge with the values already in the buffer. If the buffer is empty
-        // we need to prefill it with `0` values for periods of slience to
+        // Fill the left and right audio buffers with data for this channel.
+        // If we have sample data (a new note or the remaining sample data from
+        // the previous row) then we attenuate it for the left channel using the
+        // channel panning value and again for the right channel. The values are
+        // then merged with the values already in the buffer. If the buffer is
+        // empty we need to prefill it with `0` values for periods of slience to
         // prevent the clicking and popping noises caused by `undefined` values
         // in some browsers.
-        sample = sampleCacheKey && sampleCache[sampleCacheKey];
         for (bufferPos = bufferOffset; bufferPos < bufferOffset + tickRowSize; bufferPos++) {
           sampleByte = sample && (sample[sampleOffset++] * (1 - attenuation)) || 0;
-          buffer[bufferPos] = (buffer[bufferPos] || 0) + sampleByte;
+          leftChannelBuffer[bufferPos] = (leftChannelBuffer[bufferPos] || 0) + sampleByte * (1 - pan);
+          rightChannelBuffer[bufferPos] = (rightChannelBuffer[bufferPos] || 0) + sampleByte * pan;
         }
       }
-    }
+
+    });
 
     bufferStart = bufferPos;
   });
 
-  return buffer;
+  return [leftChannelBuffer, rightChannelBuffer];
 }

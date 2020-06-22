@@ -56,6 +56,11 @@ A ZzFXM song is a series of nested arrays containing instrument, pattern and seq
     0,                                    // ...and again
   ],
   4,                                    // Speed
+  [                                     // Channel panning values
+    -1,                                   // Play channel 0 from left speaker
+    0,                                    // Play channel 1 from both speaker
+    1                                     // Play channel 2 from right speaker
+  ]
   {                                     // Metadata
     title: "My Song"                       // Name of the song
     author: "Keith Clark"                  // Name of the author/composer
@@ -73,6 +78,7 @@ A ZzFXM song is a series of nested arrays containing instrument, pattern and seq
   <pattern-list>,
   <sequence>,
   <speed>?,
+  <panning>?,
   <metadata>?
 ]
 ```
@@ -238,6 +244,26 @@ Sequence is an array of numbers indexing `<pattern>` entries in the `<pattern-li
 ```
 
 The speed of the song. Lower is faster. Default speed is 6.
+
+
+## Panning Structure
+
+```
+[
+  <number>?,
+  ...
+]
+```
+
+Set the stereo positioning of each song channel. A value of `-1` will cause the channel to play from the left speaker. A value of `1` will cause the channel to play from the right speaker. A value between `-1` and `1` will move the channel between the left and right speaker, with `0` causing the channel to play from both.
+
+If no panning arrau is set the player will alternate channels between left and right speakers, with even numbered channels playing from the left speaker and odd channels from the right. If the panning array doesn't contain enough values for the number of channels in the song, the extra channel panning will default to `0` (centre)
+
+Some example:
+
+* `undefined` — Alternate channels between left and right speakers.
+* `[]` — Play all channels from both speakers (mono)
+* `[-1,0,1]` — Play channel 0 from the left speaker, channel 1 from both (centred) and channel 2 from the right speaker
 
 ## Metadata Structure
 
