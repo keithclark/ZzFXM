@@ -2,10 +2,10 @@
 zzfx=(...t)=>zzfxP(zzfxG(...t))
 
 // zzfxP() - the sound player -- returns a AudioBufferSourceNode
-zzfxP=t=>{let e=zzfxX.createBufferSource(),f=zzfxX.createBuffer(1,t.length,44100);f.getChannelData(0).set(t),e.buffer=f,e.connect(zzfxX.destination),e.start();return e}
+zzfxP=(...t)=>{let e=zzfxX.createBufferSource(),f=zzfxX.createBuffer(t.length,t[0].length,44100);t.map((d,i)=>f.getChannelData(i).set(d)),e.buffer=f,e.connect(zzfxX.destination),e.start();return e}
 
 // zzfxG() - the sound generator -- returns an array of sample data
-zzfxG=(t=1,a=.05,n=220,e=0,f=0,z=.1,h=0,M=1,r=0,o=0,s=0,x=0,i=0,c=0,u=0,d=0,X=0,b=1,m=0,B=2*Math.PI,C=44100,P=t=>2*t*Math.random()-t,V=t=>0<t?1:-1,g=r*=500*B/C**2,l=V(u)*B/4,w=n*=(1+P(a))*B/C,A=99+e*C|0,D=m*C|0,I=f*C|0,S=z*C|0,j=X*C|0,k=500*o*B/C**3,p=u*B/C,q=s*B/C,v=x*C,y=i*C,E=A+D+I+S+j,F=[],G=0,H=0,J=0,K=1,L=0,N=0,O=0,Q,R=zzfxX.createBufferSource(),T=zzfxX.createBuffer(1,E,C))=>{for(;J<E;F[J++]=O)++N>100*d&&(N=0,O=G*n*Math.sin(H*p-l),O=V(O=h?1<h?2<h?3<h?Math.sin((O%B)**3):Math.max(Math.min(Math.tan(O),1),-1):1-(2*O/B%2+2)%2:1-4*Math.abs(Math.round(O/B)-O/B):Math.sin(O))*Math.abs(O)**M,O*=t*zzfxV*(J<A?J/A:J<A+D?1-(J-A)/D*(1-b):J<A+D+I?b:J<E-j?(E-J-j)/S*b:0),O=j?O/2+(j>J?0:(J<E-j?1:(J-E)/j)*F[J-j]/2):O),G+=1+P(c),H+=1+P(c),n+=r+=k,K&&++K>v&&(n+=q,w+=q,K=0),y&&++L>y&&(n=w,r=g,L=1,K=K||1);return F}
+zzfxG=(a=1,t=.05,h=220,M=0,n=0,r=.1,s=0,i=1,z=0,f=0,m=0,o=0,x=0,b=0,d=0,u=0,e=0,G=1,I=0,P=2*Math.PI,V=44100,c=(a=>2*a*Math.random()-a),g=(a=>0<a?1:-1),j=(z*=500*P/V**2),k=g(d)*P/4,l=(h*=(1+c(t))*P/V),p=99+M*V|0,q=I*V|0,v=n*V|0,w=r*V|0,y=e*V|0,A=500*f*P/V**3,B=d*P/V,C=m*P/V,D=o*V,E=x*V,F=p+q+v+w+y,H=[],J=0,K=0,L=0,N=1,O=0,Q=0,R=0)=>{for(;L<F;H[L++]=R)++Q>100*u&&(Q=0,R=J*h*Math.sin(K*B-k),R=g(R=s?1<s?2<s?3<s?Math.sin((R%P)**3):Math.max(Math.min(Math.tan(R),1),-1):1-(2*R/P%2+2)%2:1-4*Math.abs(Math.round(R/P)-R/P):Math.sin(R))*Math.abs(R)**i,R*=a*zzfxV*(L<p?L/p:L<p+q?1-(L-p)/q*(1-G):L<p+q+v?G:L<F-y?(F-L-y)/w*G:0),R=y?R/2+(y>L?0:(L<F-y?1:(L-F)/y)*H[L-y]/2):R),J+=1+c(b),K+=1+c(b),h+=z+=A,N&&++N>D&&(h+=C,l+=C,N=0),E&&++O>E&&(h=l,z=j,O=1,N=N||1);return H};
 
 // zzfxV - global volume
 zzfxV=.3
