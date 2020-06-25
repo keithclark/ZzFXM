@@ -16,9 +16,11 @@ const argOptions = [
   { name: 'pretty-print', alias: 'p', type: Boolean, description: 'Generate human-readable output file.'},
 ]
 
+const commandLineHeader = 'ZzFXM Song Convertion Tool';
+
 const usage = commandLineUsage([
   {
-    header: 'ZzFXM Song Convertion Tool',
+    header: commandLineHeader,
     content: 'Generates ZzFXM song data from other formats.'
   },
   {
@@ -31,6 +33,29 @@ const usage = commandLineUsage([
 const process = async () => {
   let buffer = await readFile(options.src);
   let song = convertSong(buffer, options);
+  const assignedInstruments = []
+  const unassignedInstruments = []
+
+  let instrumentCount = song.getInstrumentCount();
+
+   for (let i=0; i<instrumentCount;i++) {
+    if (song.getInstrument(i)[0] === 0) {
+      unassignedInstruments.push(song.getInstrumentName(i))
+    } else {
+      assignedInstruments.push(song.getInstrumentName(i))
+    }
+  }
+
+  console.log(`- Converted "${song.title}"`);
+  console.log(`  • Sequence length: ${song.getSequenceLength()}`);
+  console.log(`  • Instruments: ${song.getInstrumentCount()}`);
+  console.log(`  • Patterns: ${song.getPatternCount()}`);
+  console.log(`- Created ${assignedInstruments.length} zzfx instruments:`);
+  console.log(`  • ${assignedInstruments.join(', ')}`);
+  console.log(`- Created ${unassignedInstruments.length} empty instruments`);
+  console.log(`  • ${unassignedInstruments.join(', ')}`);
+
+
   let file;
   if (options.out) {
     file = options.out;
@@ -40,7 +65,7 @@ const process = async () => {
     file = 'song.js';
   }
   await writeFile(file, `export default ${song.toString()}`);
-  console.log(`File "${file}" written successfully.`);
+  console.log(`\nFile "${file}" written successfully.`);
 }
 
 
@@ -52,6 +77,7 @@ try {
     if (!options.src) {
       throw new Error('Source file is required');
     }
+    console.log(commandLineUsage([{header: commandLineHeader}]));
     process();
   }
 } catch (e) {
