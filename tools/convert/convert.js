@@ -34,7 +34,7 @@ export const convertSong = (buffer, options) => {
     }
     else if (type === 'sequence') {
       value.forEach((value, index) => {
-        song.setSequence(index, value)
+        song.setSequencePattern(index, value)
       });
     }
     else if (type === 'sampleMeta') {
@@ -61,7 +61,7 @@ export const convertSong = (buffer, options) => {
       // console.log(`Pattern ${currentPattern}`)
       song.setPatternCount(currentPattern + 1)
       song.setPatternChannelCount(currentPattern, 4);
-      song.setPatternLength(currentPattern, patternLength);
+      song.setPatternRowCount(currentPattern, patternLength);
     } else if (type === 'patternEnd') {
       patternLength = 64;
     }
@@ -85,7 +85,7 @@ export const convertSong = (buffer, options) => {
       currentEffectCode = value;
       if (value === EFFECT_CODE_PATTERN_BREAK) {
         patternLength = currentRow
-        song.setPatternLength(currentPattern, patternLength + 1);
+        song.setPatternRowCount(currentPattern, patternLength + 1);
       }
     }
     else if (type === 'noteEffectParam') {
