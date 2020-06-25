@@ -17,7 +17,7 @@ The song format is loosely based on the MOD format, using patterns to handle rep
   let mySongData = zzfxM(...song);
 
   // Play the song (returns a AudioBufferSourceNode)
-  let myAudioNode = zzfxP(mySongData);
+  let myAudioNode = zzfxP(...mySongData);
 
   // Stop the song
   myAudioNode.stop();
@@ -33,7 +33,8 @@ A ZzFXM song is a series of nested arrays containing instrument, pattern and seq
 [                                     // Song
   [                                     // Instruments
     [.9, 0, 143, , , .35, 3],             // Instrument 1
-    [1, 0, 216, , , .45, 1, 4, , ,50]     // Instrument 2
+    [1, 0, 216, , , .45, 1, 4, , ,50],    // Instrument 2
+    [.75, 0, 196, , .08, .18, 3]          // Instrument 3
   ],
   [                                     // Patterns
     [                                     // Pattern 0
@@ -58,17 +59,15 @@ A ZzFXM song is a series of nested arrays containing instrument, pattern and seq
   4,                                    // Speed
   [                                     // Channel panning values
     -1,                                   // Play channel 0 from left speaker
-    0,                                    // Play channel 1 from both speaker
-    1                                     // Play channel 2 from right speaker
-  ]
+    1,                                    // Play channel 1 from right speaker
+    0                                     // Play channel 2 from both speakers
+  ],
   {                                     // Metadata
-    title: "My Song"                       // Name of the song
+    title: "My Song",                      // Name of the song
     author: "Keith Clark"                  // Name of the author/composer
   }
 ]
 ```
-
-
 
 ## Song Structure
 
@@ -257,12 +256,12 @@ The speed of the song. Lower is faster. Default speed is 6.
 
 Set the stereo positioning of each song channel. A value of `-1` will cause the channel to play from the left speaker. A value of `1` will cause the channel to play from the right speaker. A value between `-1` and `1` will move the channel between the left and right speaker, with `0` causing the channel to play from both.
 
-If no panning arrau is set the player will alternate channels between left and right speakers, with even numbered channels playing from the left speaker and odd channels from the right. If the panning array doesn't contain enough values for the number of channels in the song, the extra channel panning will default to `0` (centre)
+If no panning array is set the player will alternate channels between the left and right speakers, with even numbered channels playing from the left and odd channels from the right. If the panning array doesn't contain enough values for the number of channels in the song, the extra channels will default to `0` (centre)
 
 Some example:
 
 * `undefined` — Alternate channels between left and right speakers.
-* `[]` — Play all channels from both speakers (mono)
+* `[]` — Play all channels from both speakers.
 * `[-1,0,1]` — Play channel 0 from the left speaker, channel 1 from both (centred) and channel 2 from the right speaker
 
 ## Metadata Structure
@@ -288,9 +287,10 @@ const mySong = [
     [1, 0, 200],
     [1, 0, 500]
   ],
-  [ /* ...patterns... */ ],
-  [ /* ...sequence... */ ],
+  [ /* ... patterns ... */ ],
+  [ /* ... sequence ... */ ],
   6,
+  [ /* ... panning ... */],
   {
     title: "My Song",
     author: "Keith Clark",
