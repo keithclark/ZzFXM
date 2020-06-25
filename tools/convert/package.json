@@ -1,15 +1,15 @@
 {
   "name": "zzfxm-convert",
   "version": "1.0.0",
-  "description": "",
+  "description": "Song conversion tool for ZzFXM",
   "type": "module",
   "main": "convert.js",
   "bin": "./bin/zzfx-convert",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Keith Clark",
+  "license": "MIT",
   "dependencies": {
     "command-line-args": "^5.1.1",
     "command-line-usage": "^6.1.0",
