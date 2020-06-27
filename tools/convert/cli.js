@@ -2,6 +2,7 @@ import commandLineUsage from 'command-line-usage';
 import commandLineArgs from 'command-line-args';
 import { convertSong } from './convert.js';
 import { promises } from 'fs';
+import { prettyPrint} from './lib/prettyPrint.js';
 
 let options;
 
@@ -35,10 +36,12 @@ const process = async () => {
   let song = convertSong(buffer, options);
   const assignedInstruments = []
   const unassignedInstruments = []
+  const instrumentNames = [];
 
   let instrumentCount = song.getInstrumentCount();
 
    for (let i=0; i<instrumentCount;i++) {
+    instrumentNames.push(song.getInstrumentName(i));
     if (!song.getInstrument(i).length || !song.getInstrument(i)[0] === 0) {
       unassignedInstruments.push(song.getInstrumentName(i))
     } else {
@@ -69,7 +72,13 @@ const process = async () => {
   } else {
     file = 'song.js';
   }
-  await writeFile(file, `export default ${song.toString()}`);
+
+  let code = song.toString();
+  if (options.prettyPrint) {
+    code = prettyPrint(code, instrumentNames);
+  }
+
+  await writeFile(file, `export default ${code}`);
   console.log(`\nFile "${file}" written successfully.`);
 }
 

@@ -137,7 +137,7 @@ export const decodeSong = song => {
   let jsonSong = song
     .replace(/^export\s+default\s+/,'')
     .replace(/\[,/g,'[null,')
-    .replace(/,(?=[,\]])/g,',null')
+    .replace(/,\s*(?=[,\]])/g,',null')
     .replace(/([\[,]-?)(?=\.)/g,'$10');
 
   return JSON.parse(jsonSong, (key, value) => {
