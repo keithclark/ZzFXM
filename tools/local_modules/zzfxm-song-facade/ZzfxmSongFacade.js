@@ -371,6 +371,18 @@ export class ZzfxmSongFacade {
   }
 
   /**
+   * Gets the attenuation for a specific row of a channel in a pattern.
+   *
+   * @param {Number} pattern The index of the pattern containing the note
+   * @param {Number} channel The index of the chanel containing the note
+   * @param {Number} row The index of the row containing the note
+   * @returns {Number} The new attenuation for the note
+   */
+  getNoteAttenuation(pattern, channel, row) {
+    return this._data[PATTERN_INDEX][pattern][channel][row * 3 + 2];
+  }
+
+  /**
    * Returns all the notes for a specific position in the song.
    *
    * @param {Number} position The position to retrieve notes for
