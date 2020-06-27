@@ -39,7 +39,7 @@ const process = async () => {
   let instrumentCount = song.getInstrumentCount();
 
    for (let i=0; i<instrumentCount;i++) {
-    if (song.getInstrument(i)[0] === 0) {
+    if (!song.getInstrument(i).length || !song.getInstrument(i)[0] === 0) {
       unassignedInstruments.push(song.getInstrumentName(i))
     } else {
       assignedInstruments.push(song.getInstrumentName(i))
@@ -50,11 +50,16 @@ const process = async () => {
   console.log(`  • Sequence length: ${song.getSequenceLength()}`);
   console.log(`  • Instruments: ${song.getInstrumentCount()}`);
   console.log(`  • Patterns: ${song.getPatternCount()}`);
-  console.log(`- Created ${assignedInstruments.length} zzfx instruments:`);
-  console.log(`  • ${assignedInstruments.join(', ')}`);
-  console.log(`- Created ${unassignedInstruments.length} empty instruments`);
-  console.log(`  • ${unassignedInstruments.join(', ')}`);
 
+  if (assignedInstruments.length) {
+    console.log(`- Created ${assignedInstruments.length} zzfx instruments:`);
+    console.log(`  • ${assignedInstruments.join(', ')}`);
+  }
+
+  if (unassignedInstruments.length) {
+    console.log(`- Created ${unassignedInstruments.length} empty instruments`);
+    console.log(`  • ${unassignedInstruments.join(', ')}`);
+  }
 
   let file;
   if (options.out) {
