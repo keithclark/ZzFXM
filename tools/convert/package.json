@@ -15,5 +15,9 @@
     "command-line-usage": "^6.1.0",
     "song-parsers": "file:../local_modules/song-parsers",
     "zzfxm-song-facade": "file:../local_modules/zzfxm-song-facade"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/keithclark/ZzFXM"
   }
 }
