@@ -1,0 +1,22 @@
+{
+  "type": "module",
+  "name": "zzfxm-song-pack-cli",
+  "description": "ZzFXM CLI song compression tool",
+  "version": "1.0.0",
+  "bin": "./bin/zzfx-songpack",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Keith Clark",
+  "license": "MIT",
+  "dependencies": {
+    "command-line-args": "^5.1.1",
+    "command-line-usage": "^6.1.0",
+    "zzfxm-song-compressor": "file:../local_modules/zzfxm-song-compressor",
+    "zzfxm-song-facade": "file:../local_modules/zzfxm-song-facade"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/keithclark/ZzFXM"
+  }
+}
