@@ -24,6 +24,19 @@ The song format is loosely based on the MOD format, using patterns to handle rep
 </script>
 ```
 
+## Tooling
+
+This repo contains various tools to help you generate and work with ZzFXM songs:
+
+### [Song Conversion Tool](./tools/convert)
+A CLI tool for converting file in ProTracker MOD (M.K.) format to the ZzFXM format. This allows you to use tools such as [MilkyTracker](https://milkytracker.titandemo.org/) or the browser-based [Bassoon Tracker](https://www.stef.be/bassoontracker/) to author your songs. In order to keep ZzFXM small, only the volume and pattern break effects are 100% supported. The volume sliding effect is partially emulated by the song conversion tool by replacing the effect with computed volume steps.
+
+### [Song Packer Tool](./tools/songpack)
+The song packer CLI tool compresses song data. It uses plugins so you can extend it with custom code if you need to.
+
+### [Local Modules](./tools/local_modules)
+This repo contains various local node modules that are shared between the tools. Please use them if you wish to create additional tooling.
+
 
 ## Song Format
 
@@ -82,7 +95,7 @@ A ZzFXM song is a series of nested arrays containing instrument, pattern and seq
 ]
 ```
 
-## Instrument List Structure
+## `<instrument-list>` structure
 
 ```
 [
@@ -91,7 +104,7 @@ A ZzFXM song is a series of nested arrays containing instrument, pattern and seq
 ]
 ```
 
-## Instrument Structure
+## `<instrument>` structure
 
 ```
 [
@@ -142,7 +155,7 @@ Param | Description | Default | Min Value | Max Value
 `sustainVolume` | Volume level for sustain (percent) | 1 | -1000000000 | 1000000000
 `decay` | Decay time, how long to reach sustain after attack | 0 | 0 | 1
 
-## Pattern List Structure
+## `<pattern-list>` structure
 
 ```
 [
@@ -151,7 +164,7 @@ Param | Description | Default | Min Value | Max Value
 ]
 ```
 
-## Pattern Structure
+## `<pattern>` structure
 
 ```
 [
@@ -160,7 +173,7 @@ Param | Description | Default | Min Value | Max Value
 ]
 ```
 
-## Channel Structure
+## `<channel>` structure
 
 ```
 [
@@ -172,7 +185,24 @@ Param | Description | Default | Min Value | Max Value
 Channel data is a single array containing 3 slots for each row in the current pattern.
 The first slot indicates which instrument to use for playing notes. Slot 2 contains the note period and slot 3 holds the attenuation value. A `0` value indicates a noop for that slot.
 
-## Channel Period
+
+## `<channel-instrument>` structure
+
+This contains an index pointing to the songs instrument array. If it contains a non-zero value then instrument `value-1` is set as the current instrument for future notes.
+
+If you wish to use the same instrument for consecutive notes, you only need to set it once.
+
+```js
+[
+  1, 1, 0,        // Set instrument 1 and play C-1
+  0, 5, 0,        // Using current instrument (1), play E-1
+  0, 6, 0         // Using current instrument (1), play F-1
+  2, 3, 0         // Set instrument 2 and play D-1
+],
+```
+
+
+## `<channel-period>` structure
 
 If this slot contains a value between 1 and 36 then the corresponding note will be played with the current instrument. When a new period is set any note currently playing in the channel is stopped and the channel attenuation is reset.
 
@@ -192,22 +222,7 @@ Value | Note | Value | Note | Value | Note
 `0c`  | B-1  | `18`  | B-2  | `24`  | B-3
 
 
-## Channel Instrument
-
-This contains an index pointing to the songs instrument array. If it contains a non-zero value then instrument `value-1` is set as the current instrument for future notes.
-
-If you wish to use the same instrument for consecutive notes, you only need to set it once.
-
-```js
-[
-  1, 1, 0,        // Set instrument 1 and play C-1
-  0, 5, 0,        // Using current instrument (1), play E-1
-  0, 6, 0         // Using current instrument (1), play F-1
-  2, 3, 0         // Set instrument 2 and play D-1
-],
-```
-
-## Channel Attenuation
+## `<channel-attenuation>` structure
 
 If this slot contains a value between 1 and 64 the volume of the channel is reduced accordingly. A value of `1` sets the volume to 100%, `64` sets the volume to 0%.
 
@@ -221,7 +236,7 @@ If this slot contains a value between 1 and 64 the volume of the channel is redu
 ],
 ```
 
-## Sequence Structure
+## `<sequence>` structure
 
 ```
 [
@@ -236,7 +251,7 @@ Sequence is an array of numbers indexing `<pattern>` entries in the `<pattern-li
 [0, 1, 1, 2]       // play pattern 0 followed by pattern 1 (twice) then pattern 2
 ```
 
-## Speed
+## `<speed>` structure
 
 ```
 <integer>
@@ -245,7 +260,7 @@ Sequence is an array of numbers indexing `<pattern>` entries in the `<pattern-li
 The speed of the song. Lower is faster. Default speed is 6.
 
 
-## Panning Structure
+## `<panning>` structure
 
 ```
 [
@@ -264,7 +279,7 @@ Some example:
 * `[]` — Play all channels from both speakers.
 * `[-1,0,1]` — Play channel 0 from the left speaker, channel 1 from both (centred) and channel 2 from the right speaker
 
-## Metadata Structure
+## `<metadata>` structure
 
 ```
 {
