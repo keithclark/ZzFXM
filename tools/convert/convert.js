@@ -30,6 +30,9 @@ export const convertSong = (buffer, options) => {
       song.title = value;
     }
     else if (type === 'channelCount') {
+      for (let c = 0; c < value; c++) {
+        song.setChannelPanning(c, c%2 === 0 ? -1 : 1);
+      }
       song.setMeta('channels', value);
     }
     else if (type === 'sequence') {

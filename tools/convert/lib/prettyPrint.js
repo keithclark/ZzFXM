@@ -9,7 +9,7 @@ export const prettyPrint = (src, instrumentNames = []) => {
   let stack = [];
   let index = 0;
   let depth = 0;
-  let maxDepths=[1,2,0,0];
+  let maxDepths=[1,2,0,0,0];
 
   return [...src].map(chr => {
     const rootIndex = stack[0] || 0

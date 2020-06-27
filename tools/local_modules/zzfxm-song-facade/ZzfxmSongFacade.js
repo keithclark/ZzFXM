@@ -432,6 +432,29 @@ export class ZzfxmSongFacade {
     }
   }
 
+  /**
+   * Gets the stereo panning position of a channel.
+   *
+   * @param {Number} channel The index of the channel to move
+   * @returns {Number} Position between -1 (left) and 1 (right)
+   */
+  getChannelPanning(channel, value) {
+    return this._data[PANNING_INDEX][channel];
+  }
+
+  /**
+   * Set the stereo panning position of a channel.
+   *
+   * @param {Number} channel The index of the channel to move
+   * @param {Number} value Position between -1 (left) and 1 (right)
+   */
+  setChannelPanning(channel, value) {
+    if (!this._data[PANNING_INDEX]) {
+      this._data[PANNING_INDEX] = [];
+    }
+    this._data[PANNING_INDEX][channel] = Math.min(1, Math.max(-1, value));
+  }
+
   toString() {
     return encodeSong(this._data);
   }
