@@ -3,6 +3,7 @@ import { parseProtracker } from 'song-parsers';
 import { createInstrumentFromSample } from './lib/instrumentResolver.js';
 
 
+const EFFECT_CODE_VOLUME_SLIDE = 10;
 const EFFECT_CODE_VOLUME = 12;
 const EFFECT_CODE_PATTERN_BREAK = 13;
 const EFFECT_CODE_SPEED = 15;
@@ -19,7 +20,6 @@ export const convertSong = (buffer, options) => {
   let patternLength = 64;
 
   parseProtracker(buffer, (token) => {
-
     let {type, value} = token;
 
     if (currentRow > patternLength && type !== 'patternEnd') {
@@ -92,13 +92,33 @@ export const convertSong = (buffer, options) => {
       if (currentEffectCode === EFFECT_CODE_VOLUME) {
         value = 64 - Math.min(64, value);
         song.setNoteAttenuation(currentPattern, currentChannel, currentRow, value);
-      } else if (currentEffectCode === EFFECT_CODE_SPEED) {
+      }
+
+      // ZzFXM doesn't support variable song speeds.
+      else if (currentEffectCode === EFFECT_CODE_SPEED) {
         if (currentSpeed && value !== currentSpeed) {
           if (!options.ignoreErrors) {
             throw new Error('Variable speeds not supported');
           }
         } else {
           currentSpeed = song.speed = value;
+        }
+      }
+
+      // ZzFXM doesn't support volume sliding effects but without some sort of
+      // support songs can sound terrible so we attempt to make do by forcing an
+      // attenutation.
+      else if (currentEffectCode === EFFECT_CODE_VOLUME_SLIDE) {
+        let volumeSlideVal
+        if (value > 15) {
+          volumeSlideVal = value >> 4;
+        } else {
+          volumeSlideVal = -value;
+        }
+        if (currentRow > 0) {
+          const prevAttenutation = song.getNoteAttenuation(currentPattern, currentChannel, currentRow - 1);
+          const newAttenuation = Math.max(0, Math.min( prevAttenutation - volumeSlideVal, 64))
+          song.setNoteAttenuation(currentPattern, currentChannel, currentRow, newAttenuation);
         }
       }
     }
