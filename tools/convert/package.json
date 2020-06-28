@@ -4,15 +4,14 @@
   "description": "Song conversion tool for ZzFXM",
   "type": "module",
   "main": "convert.js",
-  "bin": "./bin/zzfx-convert",
+  "bin": "./bin/zzfxm-convert",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Keith Clark",
   "license": "MIT",
   "dependencies": {
-    "command-line-args": "^5.1.1",
-    "command-line-usage": "^6.1.0",
+    "cli": "file:../local_modules/cli",
     "song-parsers": "file:../local_modules/song-parsers",
     "zzfxm-song-facade": "file:../local_modules/zzfxm-song-facade"
   },

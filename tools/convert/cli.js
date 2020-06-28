@@ -1,51 +1,29 @@
-import commandLineUsage from 'command-line-usage';
-import commandLineArgs from 'command-line-args';
+import cli from 'cli';
 import { convertSong } from './convert.js';
 import { promises } from 'fs';
 import { prettyPrint} from './lib/prettyPrint.js';
-import { exit } from 'process';
+import { resolve, dirname} from 'path';
+import { fileURLToPath } from 'url';
 
-let options;
+const { readFile, writeFile } = promises;
 
-const {readFile, writeFile} = promises;
+let options = cli({
+  name: 'My cool app',
+  packageJson: resolve(dirname(fileURLToPath(import.meta.url)), 'package.json'),
+  inputPaths: 'single',
+  outputPath: 'optional',
+  options: [
+    { name: 'ignore-errors', alias: 'i', type: Boolean, description: 'Ignore incompatability errors with ZzxFM and the source song.' },
+    { name: 'no-instruments', alias: 'n', type: Boolean, description: 'Don\'t generate instrument data.'},
+    { name: 'sane-instruments', alias: 's', type: Boolean, description: 'Only generate data for known instruments.'},
+    { name: 'pretty-print', alias: 'p', type: Boolean, description: 'Generate human-readable output file.'},
+    { name: 'format', alias: 'f', values: ['none', 'esm'], type: String, description: `Output format.`, defaultValue: 'none'},
+  ]
+});
 
-const OUTPUT_FORMAT_OPTIONS = [
-  'none',
-  'esm'
-];
-
-const argOptions = [
-  { name: 'files', type: String, multiple: true, defaultOption: true},
-  { name: 'ignore-errors', alias: 'i', type: Boolean, description: 'Ignore incompatability errors with ZzxFM and the source song.' },
-  { name: 'no-instruments', alias: 'n', type: Boolean, description: 'Don\'t generate instrument data.'},
-  { name: 'sane-instruments', alias: 's', type: Boolean, description: 'Only generate data for known instruments.'},
-  { name: 'pretty-print', alias: 'p', type: Boolean, description: 'Generate human-readable output file.'},
-  { name: 'format', alias: 'f', type: String, description: `Output format (${OUTPUT_FORMAT_OPTIONS.join(', ')}). Default: none`, defaultValue: 'none'},
-  { name: 'help', type: Boolean, description: "Show this help"},
-];
-
-const commandLineHeader = 'ZzFXM Song Convertion Tool';
-
-const usage = commandLineUsage([
-  {
-    header: commandLineHeader,
-    content: 'Generates ZzFXM song data from other formats.'
-  },
-  {
-    header: 'Synopsis',
-    content: '$ zzfxm-convert {underline input-path} [{underline output-path}] [options]'
-  },
-  {
-    header: 'Options',
-    hide: ['files'],
-    optionList: argOptions
-  }
-]);
-
-
-const process = async (options) => {
-  let buffer = await readFile(options.files[0]);
-  let song = convertSong(buffer, options);
+const run = async (options) => {
+  const buffer = await readFile(options.paths[0]);
+  const song = convertSong(buffer, options);
   const assignedInstruments = []
   const unassignedInstruments = []
   const instrumentNames = [];
@@ -77,8 +55,8 @@ const process = async (options) => {
   }
 
   let dest;
-  if (options.files[1]) {
-    dest = options.files[1];
+  if (options.paths[1]) {
+    dest = options.paths[1];
   } else if (song.title) {
     dest = `${song.title}.js`
   } else {
@@ -93,30 +71,9 @@ const process = async (options) => {
   if (options.format === 'esm') {
     code = `export default ${code};`;
   }
+
   await writeFile(dest, code);
   console.log(`\nFile "${dest}" written successfully.`);
 }
 
-
-try {
-  options = commandLineArgs(argOptions, { camelCase: true });
-  if (options.help) {
-    console.log(usage);
-    exit();
-  }
-
-  if (!OUTPUT_FORMAT_OPTIONS.includes(options.format)) {
-    throw new Error('Invalid output format');
-  }
-  if (!options.files) {
-    throw new Error('Source file is required.');
-  }
-  if (options.files.length > 2) {
-    throw new Error('Too many files specified.');
-  }
-
-  console.log(commandLineUsage([{header: commandLineHeader}]));
-  process(options);
-} catch (e) {
-  console.error(e.message);
-}
+run(options);
