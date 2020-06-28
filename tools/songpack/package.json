@@ -10,8 +10,7 @@
   "author": "Keith Clark",
   "license": "MIT",
   "dependencies": {
-    "command-line-args": "^5.1.1",
-    "command-line-usage": "^6.1.0",
+    "cli": "file:../local_modules/cli",
     "zzfxm-song-compressor": "file:../local_modules/zzfxm-song-compressor",
     "zzfxm-song-facade": "file:../local_modules/zzfxm-song-facade"
   },
