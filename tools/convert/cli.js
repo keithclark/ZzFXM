@@ -8,7 +8,7 @@ import { fileURLToPath } from 'url';
 const { readFile, writeFile } = promises;
 
 let options = cli({
-  name: 'My cool app',
+  name: 'ZzFXM Song Convertion Tool',
   packageJson: resolve(dirname(fileURLToPath(import.meta.url)), 'package.json'),
   inputPaths: 'single',
   outputPath: 'optional',
