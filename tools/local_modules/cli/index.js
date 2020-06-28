@@ -7,7 +7,8 @@ import { createRequire } from 'module';
 export default (config = {}) => {
 
   const reportError = message => {
-    console.error(message);
+    console.log(commandLineUsage({header: appName}));
+    console.error(`Error: ${message}`);
     process.exit();
   };
 
@@ -15,6 +16,7 @@ export default (config = {}) => {
   let appDescription;
   let appBinary = parse(process.argv[1]).name;
   let appVersion;
+  let options;
 
   if (config.packageJson) {
     const require = createRequire(import.meta.url);
@@ -37,7 +39,11 @@ export default (config = {}) => {
     argOptions.push({name: 'paths', type: String, multiple: true, defaultOption: true, defaultValue: []});
   }
 
-  const options = commandLineArgs(argOptions, { camelCase: true });
+  try {
+    options = commandLineArgs(argOptions, { camelCase: true });
+  } catch (e) {
+    reportError(e.message);
+  }
 
   if (options.version) {
     console.log(`v${appVersion}`);
@@ -145,6 +151,11 @@ export default (config = {}) => {
       }
     }
   });
+
+  // Output the header
+  console.log(commandLineUsage({
+    header: appName
+  }));
 
   return options;
 }
