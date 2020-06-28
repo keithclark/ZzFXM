@@ -3,7 +3,7 @@
   "name": "zzfxm-song-pack-cli",
   "description": "ZzFXM CLI song compression tool",
   "version": "1.0.0",
-  "bin": "./bin/zzfx-songpack",
+  "bin": "./bin/zzfxm-songpack",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
