@@ -1,7 +1,7 @@
 import cli from 'cli';
+import { ZzfxmSongFacade } from 'zzfxm-song-facade';
 import { packSong } from 'zzfxm-song-compressor';
 import { promises } from 'fs';
-import { ZzfxmSongFacade } from '../local_modules/zzfxm-song-facade/ZzfxmSongFacade.js';
 import { deflate } from 'zlib';
 import { resolve, dirname} from 'path';
 import { fileURLToPath } from 'url';
