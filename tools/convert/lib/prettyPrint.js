@@ -12,8 +12,8 @@ export const prettyPrint = (src, instrumentNames = []) => {
   let maxDepths=[1,2,0,0,0];
 
   return [...src].map(chr => {
-    const rootIndex = stack[0] || 0
-    const maxDepth = maxDepths[rootIndex]
+    const rootIndex = stack[0] || 0;
+    const maxDepth = maxDepths[rootIndex];
 
     // Opening array or object requires an indent until we hit the maxDepth for
     // the current root index:
@@ -54,7 +54,7 @@ export const prettyPrint = (src, instrumentNames = []) => {
         return chr;
       }
       const indent = '  '.repeat(depth + 1);
-      return '\n' + indent + chr
+      return '\n' + indent + chr;
     }
 
     // Maintain depth for elements
@@ -67,7 +67,7 @@ export const prettyPrint = (src, instrumentNames = []) => {
         return chr;
       }
       const indent = '  '.repeat(depth + 1);
-      return chr + '\n' + indent
+      return chr + '\n' + indent;
     }
     return chr;
   }).join('');
