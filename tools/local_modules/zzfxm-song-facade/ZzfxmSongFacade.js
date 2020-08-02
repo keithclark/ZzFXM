@@ -1,12 +1,12 @@
 import { setArrayLength } from './utils.js';
 import { encodeSong, decodeSong } from './encoding.js';
+import { validateInRange } from './validators.js';
 
 const INSTRUMENT_INDEX = 0;
 const PATTERN_INDEX = 1;
 const SEQUENCE_INDEX = 2;
 const SPEED_INDEX = 3;
-const PANNING_INDEX = 4;
-const META_INDEX = 5;
+const META_INDEX = 4;
 
 
 export class ZzfxmSongFacade {
@@ -81,7 +81,7 @@ export class ZzfxmSongFacade {
     if (this._length === null) {
       this._length = 0;
       this._data[SEQUENCE_INDEX].forEach(patternIndex => {
-        this._length += this.getPatternLength(patternIndex);
+        this._length += this.getPatternRowCount(patternIndex);
       });
     }
     return this._length;
@@ -98,7 +98,7 @@ export class ZzfxmSongFacade {
   }
 
   /**
-   * Get the pattern at a specific sequence position
+   * Set the pattern at a specific sequence position
    *
    * @param {Number} position The sequence position to set
    * @param {Number} new Pattern index
@@ -106,6 +106,17 @@ export class ZzfxmSongFacade {
   setSequencePattern(position, value) {
     this._data[SEQUENCE_INDEX][position] = value;
   }
+
+  /**
+   * Set the pattern at a specific sequence position
+   *
+   * @param {Number} position The sequence position to set
+   * @param {Number} new Pattern index
+   */
+  deleteSequence(position) {
+    this._data[SEQUENCE_INDEX].splice(position, 1)
+  }
+
 
   /**
    * Returns the length of the sequence
@@ -126,12 +137,23 @@ export class ZzfxmSongFacade {
   }
 
   /**
-   * Returns the zzfx parameters for an instrument
+   * Sets the number of instruments used in the current song
+   *
+   * @returns {Number} The new number of instruments
+   */
+  setInstrumentCount(length) {
+    setArrayLength(this._data[INSTRUMENT_INDEX], length);
+  }
+
+
+  /**
+   * Returns the zzfx parameters for an instrument.
    *
    * @param {Number} index The instrument to get
    * @returns {Number[]} ZzFX parameters for the instrument
    */
   getInstrument(index) {
+    validateInRange(index, 0, this.getInstrumentCount()- 1, 'instrument');
     return this._data[INSTRUMENT_INDEX][index];
   }
 
@@ -142,40 +164,41 @@ export class ZzfxmSongFacade {
    * @param {Number[]} instrument ZzFX parameters for the instrument
    */
   setInstrument(index, instrument) {
+    validateInRange(index, 0, this.getInstrumentCount()-1, 'instrument');
     this._data[INSTRUMENT_INDEX][index] = instrument;
   }
 
   /**
    * Delete an instrument from a song. This will remove the indexed instrument
    * and reassign following instruments to fill the space. Instruments will be
-   * also be reassigned in song patterns. If the deleted instrument is used in
-   * song patterns the notes will also be deleted.
+   * also be reassigned in song channels. If the deleted instrument is used in
+   * song channels, the channels will also be deleted.
    *
    * @param {Number} index The instrument to delete
    */
   deleteInstrument(index) {
+    validateInRange(index, 0, this.getInstrumentCount() - 1, 'instrument');
+
     this._data[INSTRUMENT_INDEX].splice(index, 1);
 
     const patternCount = this.getPatternCount();
     for (let patternIndex = 0; patternIndex < patternCount; patternIndex++) {
-      const rowCount = this.getPatternRowCount(patternIndex);
       const channelCount = this.getPatternChannelCount(patternIndex);
-      for (let channelIndex = 0; channelIndex < channelCount; channelIndex++) {
-        for (let rowIndex = 0; rowIndex < rowCount; rowIndex++) {
-          const instrument = this.getNoteInstrument(patternIndex, channelIndex, rowIndex);
-          // if there's no instrument, bail out now
-          if (!instrument) {
-            continue;
+      for (let channelIndex = channelCount - 1; channelIndex >= 0; channelIndex--) {
+        const instrument = this.getChannelInstrument(patternIndex, channelIndex);
+
+        // delete the channel if it's using the instrument we're deleting
+        if (instrument === index) {
+          this.deleteChannel(patternIndex, channelIndex);
+          // if this was the only channel in the pattern, delete the pattern
+          if (channelCount === 1) {
+            this.deletePattern(patternIndex);
           }
-          // if this instrument is the one we're deleting, clear the note
-          if (instrument === index + 1) {
-            this.clearNote(patternIndex, channelIndex, rowIndex);
-          }
-          // if this instrument has a higher index than the one we're deleting
-          // reassign it.
-          else if (instrument > index + 1) {
-            this.setNoteInstrument(patternIndex, channelIndex, rowIndex, instrument - 1);
-          }
+        }
+        // if this instrument has a higher index than the one we're deleting
+        // reassign it.
+        else if (instrument > index) {
+          this.setChannelInstrument(patternIndex, channelIndex, instrument - 1);
         }
       }
     }
@@ -189,6 +212,7 @@ export class ZzfxmSongFacade {
    * @param {String} name The new instrument name
    */
   setInstrumentName(index, name) {
+    validateInRange(index, 0, this.getInstrumentCount(), 'instrument');
     let instrumentMeta = this.getMeta('instruments');
     if (!instrumentMeta) {
       instrumentMeta = [];
@@ -203,6 +227,7 @@ export class ZzfxmSongFacade {
    * @param {Number} index The instrument to get
    */
   getInstrumentName(index) {
+    validateInRange(index, 0, this.getInstrumentCount(), 'instrument');
     let instrumentMeta = this.getMeta('instruments');
     if (instrumentMeta) {
       return instrumentMeta[index];
@@ -227,7 +252,7 @@ export class ZzfxmSongFacade {
    *
    * @returns {Number} The song pattern count
    */
-  getPatternCount(length) {
+  getPatternCount() {
     return this._data[PATTERN_INDEX].length;
   }
 
@@ -238,7 +263,7 @@ export class ZzfxmSongFacade {
    * @returns {Number} The number of rows in the pattern
    */
   getPatternRowCount(pattern) {
-    return this._data[PATTERN_INDEX][pattern][0].length / 3 | 0;
+    return this._data[PATTERN_INDEX][pattern][0].length - 2;
   }
 
   /**
@@ -252,7 +277,7 @@ export class ZzfxmSongFacade {
    */
   setPatternRowCount(pattern, length) {
     this._data[PATTERN_INDEX][pattern].forEach((channel,i) => {
-      setArrayLength(channel, length * 3, 0);
+      setArrayLength(channel, length + 2, 0);
     });
   }
 
@@ -266,6 +291,7 @@ export class ZzfxmSongFacade {
    */
   setPatternChannelCount(pattern, count) {
     setArrayLength(this._data[PATTERN_INDEX][pattern], count);
+    this.setPatternRowCount(pattern, this.getPatternRowCount(pattern));
   }
 
 
@@ -279,6 +305,27 @@ export class ZzfxmSongFacade {
     return this._data[PATTERN_INDEX][pattern].length;
   }
 
+
+  /**
+   * Deletes a pattern from a song.
+   *
+   * @param {*} pattern
+   */
+  deletePattern(pattern) {
+    const sequenceCount = this.getSequenceLength();
+    this._data[PATTERN_INDEX].splice(pattern, 1);
+
+    for (let sequenceIndex = sequenceCount - 1; sequenceIndex >= 0; sequenceIndex--) {
+      const sequencePattern = this.getSequencePattern(sequenceIndex);
+      if (sequencePattern === pattern) {
+        this.deleteSequence(sequenceIndex);
+      } else if (sequencePattern > pattern) {
+        this.setSequencePattern(sequenceIndex, sequencePattern - 1);
+      }
+    }
+  }
+
+
   /**
    * Clears the period, instrument and attenuation data for a row of a channel
    * in a pattern.
@@ -288,7 +335,7 @@ export class ZzfxmSongFacade {
    * @param {Number} row The index of the row containing the note
    */
   clearNote(pattern, channel, row) {
-    return this.setNote(pattern, channel, row, 0, 0, 0);
+    return this.setNote(pattern, channel, row, 0, 0);
   }
 
   /**
@@ -297,10 +344,10 @@ export class ZzfxmSongFacade {
    * @param {Number} pattern The index of the pattern containing the note
    * @param {Number} channel The index of the chanel containing the note
    * @param {Number} row The index of the row containing the note
-   * @returns {Number[]} Array containing note period, instrument and attentiation
+   * @returns {Number} Array containing note period, instrument and attentiation
    */
   getNote(pattern, channel, row) {
-    return this._data[PATTERN_INDEX][pattern][channel].slice(row * 3, row * 3 + 3);
+    return this._data[PATTERN_INDEX][pattern][channel][row + 2];
   }
 
   /**
@@ -310,18 +357,29 @@ export class ZzfxmSongFacade {
    * @param {Number} channel The index of the chanel containing the note
    * @param {Number} row The index of the row containing the note
    * @param {Number} period The period of the note
-   * @param {Number} instrument The instrument of the note
    * @param {Number} attenuation  The attenuation of the note
    */
-  setNote(pattern, channel, row, period, instrument, attenuation = 0) {
+  setNote(pattern, channel, row, period, attenuation = 0) {
     this.setNotePeriod(pattern, channel, row, period);
-    this.setNoteInstrument(pattern, channel, row, instrument);
     this.setNoteAttenuation(pattern, channel, row, attenuation);
+  }
+
+
+  /**
+   * Gets the note period for a specific row of a channel in a pattern.
+   *
+   * @param {Number} pattern The index of the pattern containing the note
+   * @param {Number} channel The index of the chanel containing the note
+   * @param {Number} row The index of the row containing the note
+   * @returns {Number} period The new period for the note
+   */
+  getNotePeriod(pattern, channel, row) {
+    return this.getNote(pattern, channel, row) | 0;
   }
 
   /**
    * Sets the note period for a specific row of a channel in a pattern without
-   * modifying the instrument or attenuation.
+   * modifying the attenuation.
    *
    * @param {Number} pattern The index of the pattern containing the note
    * @param {Number} channel The index of the chanel containing the note
@@ -329,45 +387,21 @@ export class ZzfxmSongFacade {
    * @param {Number} period The new period for the note
    */
   setNotePeriod(pattern, channel, row, period) {
-    this._data[PATTERN_INDEX][pattern][channel][row * 3 + 1] = period;
-  }
-
-  /**
-   * Sets the instrument for a specific row of a channel in a pattern without
-   * modifying the period or attenuation.
-   *
-   * @param {Number} pattern The index of the pattern containing the note
-   * @param {Number} channel The index of the chanel containing the note
-   * @param {Number} row The index of the row containing the note
-   * @param {Number} instrument The new instrument for the note
-   */
-  setNoteInstrument(pattern, channel, row, instrument) {
-    this._data[PATTERN_INDEX][pattern][channel][row * 3] = instrument;
-  }
-
-  /**
-   * Gets the instrument for a specific row of a channel in a pattern.
-   *
-   * @param {Number} pattern The index of the pattern containing the note
-   * @param {Number} channel The index of the chanel containing the note
-   * @param {Number} row The index of the row containing the note
-   * @returns {Number} instrument The new instrument for the note
-   */
-  getNoteInstrument(pattern, channel, row) {
-    return this._data[PATTERN_INDEX][pattern][channel][row * 3];
+    this._data[PATTERN_INDEX][pattern][channel][row + 2] = period | 0;
   }
 
   /**
    * Sets the attenuation for a specific row of a channel in a pattern without
-   * modifying the period or instrument.
+   * modifying the period.
    *
    * @param {Number} pattern The index of the pattern containing the note
    * @param {Number} channel The index of the chanel containing the note
    * @param {Number} row The index of the row containing the note
-   * @param {Number} instrument The new attenuation for the note
+   * @param {Number} attenuation The new attenuation for the note
    */
   setNoteAttenuation(pattern, channel, row, attenuation) {
-    this._data[PATTERN_INDEX][pattern][channel][row * 3 + 2] = attenuation;
+    const period = this.getNotePeriod(pattern,channel,row);
+    this._data[PATTERN_INDEX][pattern][channel][row + 2] = period + (attenuation % 1);
   }
 
   /**
@@ -379,7 +413,7 @@ export class ZzfxmSongFacade {
    * @returns {Number} The new attenuation for the note
    */
   getNoteAttenuation(pattern, channel, row) {
-    return this._data[PATTERN_INDEX][pattern][channel][row * 3 + 2];
+    return this.getNote(pattern, channel, row) % 1;
   }
 
   /**
@@ -401,7 +435,7 @@ export class ZzfxmSongFacade {
    * @returns {Array[][]} Notes for the row
    */
   getNotesAtPatternRow(pattern, row) {
-    return this._data[PATTERN_INDEX][pattern].map(channel => (channel || []).slice(row * 3,row * 3 + 3));
+    return this._data[PATTERN_INDEX][pattern].map(channel => (channel || []).slice(row + 2, row + 3));
   }
 
   /**
@@ -420,7 +454,7 @@ export class ZzfxmSongFacade {
     let pos = 0;
     for (let sequenceIndex = 0; sequenceIndex < this._data[SEQUENCE_INDEX].length; sequenceIndex++) {
       let patternIndex = this._data[SEQUENCE_INDEX][sequenceIndex];
-      let nextPos = pos + this.getPatternLength(patternIndex) - 1;
+      let nextPos = pos + this.getPatternRowCount(patternIndex) - 1;
       if (nextPos >= position) {
         return {
           sequence: sequenceIndex,
@@ -435,24 +469,55 @@ export class ZzfxmSongFacade {
   /**
    * Gets the stereo panning position of a channel.
    *
-   * @param {Number} channel The index of the channel to move
+   * @param {Number} pattern The index of the pattern containing the channel
+   * @param {Number} channel The index of the channel
    * @returns {Number} Position between -1 (left) and 1 (right)
    */
-  getChannelPanning(channel, value) {
-    return this._data[PANNING_INDEX][channel];
+  getChannelPanning(pattern, channel, value) {
+    return this._data[PATTERN_INDEX][pattern][channel][1];
   }
 
   /**
    * Set the stereo panning position of a channel.
    *
-   * @param {Number} channel The index of the channel to move
+   * @param {Number} pattern The index of the pattern containing the channel
+   * @param {Number} channel The index of the channel
    * @param {Number} value Position between -1 (left) and 1 (right)
    */
-  setChannelPanning(channel, value) {
-    if (!this._data[PANNING_INDEX]) {
-      this._data[PANNING_INDEX] = [];
-    }
-    this._data[PANNING_INDEX][channel] = Math.min(1, Math.max(-1, value));
+  setChannelPanning(pattern, channel, value) {
+    this._data[PATTERN_INDEX][pattern][channel][1] = Math.min(1, Math.max(-1, value));
+  }
+
+  /**
+   * Get the instrument of a channel.
+   *
+   * @param {Number} pattern The index of the pattern containing the channel
+   * @param {Number} channel The index of the channel
+   * @returns {Number} Instrument number
+   */
+  getChannelInstrument(pattern, channel) {
+    return this._data[PATTERN_INDEX][pattern][channel][0];
+  }
+
+  /**
+   * Set the instrument of a channel.
+   *
+   * @param {Number} pattern The index of the pattern containing the channel
+   * @param {Number} channel The index of the channel
+   * @param {Number} value Instrument number
+   */
+  setChannelInstrument(pattern, channel, value) {
+    return this._data[PATTERN_INDEX][pattern][channel][0] = value;
+  }
+
+  /**
+   * Delete a channel from a pattern
+   *
+   * @param {Number} pattern The index of the pattern containing the channel
+   * @param {Number} channel The index of the channel
+   */
+  deleteChannel(pattern, channel) {
+    this._data[PATTERN_INDEX][pattern].splice(channel, 1);
   }
 
   toString() {
