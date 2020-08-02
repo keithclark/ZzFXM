@@ -1,6 +1,17 @@
+/**
+ * Encode a number into the smallest possible footprint. Removes leading 0 from
+ * decimal numbers and replaces three or more trailing 0's with `e` notation.
+ *
+ * @param {Number} value
+ * @returns {String} the encoded value
+ */
 export const encodeNumber = value => {
-  return JSON.stringify(value).replace(/^(-?)0/g, '$1');
+  let encoded = JSON.stringify(value);
+  encoded = encoded.replace(/^(-?)0/g, '$1');
+  encoded = encoded.replace(/0{3,}$/g, m => `e${m.length}`);
+  return encoded;
 }
+
 
 /**
  * Encodes ZzFX instruments into a string, removing values as needed to keep
@@ -56,6 +67,7 @@ export const encodeInstruments = instruments => {
   return `[${v.join()}]`;
 }
 
+
 /**
  * Encodes song patterns into a string, removing values as needed to keep
  * size to a minimum.
@@ -66,6 +78,8 @@ export const encodePatterns = patterns => {
   return JSON.stringify(patterns)
     .replace(/null/g, '')
     .replace(/(\D)0(?=\D)/g, '$1')
+    .replace(/,]/g, ',,]')
+
 }
 
 
@@ -90,22 +104,12 @@ export const encodeMetadata = metaData => {
 
 
 /**
- * Encodes song panning data into a string.
- *
- * @param {Object} panning The song panning data
- */
-export const encodePanning = panning => {
-  return JSON.stringify(panning);
-}
-
-
-/**
  * Encodes song speed value into a string.
  *
  * @param {Object} panning The song panning data
  */
 export const encodeSpeed = speed => {
-  if (speed !== 4) {
+  if (speed !== 125) {
     return JSON.stringify(speed);
   }
 }
@@ -122,8 +126,7 @@ export const encodeSong = song => {
     encodePatterns(song[1]),
     encodeSequence(song[2]),
     encodeSpeed(song[3]),
-    encodePanning(song[4]),
-    encodeMetadata(song[5])
+    encodeMetadata(song[4])
   ];
   return `[${elements.join(',')}]`
 }
@@ -137,6 +140,7 @@ export const decodeSong = song => {
   let jsonSong = song
     .replace(/^export\s+default\s+/,'')
     .replace(/\[,/g,'[null,')
+    .replace(/,,\]/g,',null]') // remove `undefined` work around
     .replace(/,\s*(?=[,\]])/g,',null')
     .replace(/([\[,]-?)(?=\.)/g,'$10');
 
