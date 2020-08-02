@@ -45,23 +45,29 @@ A ZzFXM song is a series of nested arrays containing instrument, pattern and seq
 ```js
 [                                     // Song
   [                                     // Instruments
-    [.9, 0, 143, , , .35, 3],             // Instrument 1
-    [1, 0, 216, , , .45, 1, 4, , ,50],    // Instrument 2
-    [.75, 0, 196, , .08, .18, 3]          // Instrument 3
+    [.9, 0, 143, , , .35, 3],             // Instrument 0
+    [1, 0, 216, , , .45, 1, 4, , ,50],    // Instrument 1
+    [.75, 0, 196, , .08, .18, 3]          // Instrument 2
   ],
   [                                     // Patterns
     [                                     // Pattern 0
       [                                     // Channel 0
-        1, 1, 0,                            // Using instrument 1, play C-1
-        0, 0, 0,
-        1, 5, 32,                           // Using instrument 1, play E-1 with 50% attenuation
-        0, 0, 0
+        0,                                    // Using instrument 0
+        -1,                                   // From the left speaker
+        1,                                    // play C-1
+        0, 0, 0,                              // rest (x3)
+        3.5,                                  // play E-1 with 50% attenuation
+        0, 0, 0                               // rest (x3)
       ],
-      [                                   // Channel 1
-        2, 8, 0,                            // Using instrument 2, play G-1
-        2, 8, 16,                           // Using instrument 2, play G-1 with 25% attenuation
-        3, 1, 0,                            // Using instrument 3, play C-1
-        0, 0, 0
+      [                                     // Channel 1
+        1,                                    // Using instrument 1
+        1,                                    // From the right speaker
+        2,                                    // play D-1
+        2.25,                                 // play D-1 with 25% attenuation
+        3.5,                                  // Play E-1 with 50% attenuation
+        4.75,                                 // Play F-1 with 75% attenuation
+        -1,                                   // Release the note
+        0, 0, 0                               // rest (x3)
       ]
     ]
   ],
@@ -69,12 +75,7 @@ A ZzFXM song is a series of nested arrays containing instrument, pattern and seq
     0,                                    // Play pattern 0
     0,                                    // ...and again
   ],
-  4,                                    // Speed
-  [                                     // Channel panning values
-    -1,                                   // Play channel 0 from left speaker
-    1,                                    // Play channel 1 from right speaker
-    0                                     // Play channel 2 from both speakers
-  ],
+  120,                                  // 120 BPM
   {                                     // Metadata
     title: "My Song",                      // Name of the song
     author: "Keith Clark"                  // Name of the author/composer
@@ -90,7 +91,6 @@ A ZzFXM song is a series of nested arrays containing instrument, pattern and seq
   <pattern-list>,
   <sequence>,
   <speed>?,
-  <panning>?,
   <metadata>?
 ]
 ```
@@ -177,34 +177,38 @@ Param | Description | Default | Min Value | Max Value
 
 ```
 [
-  <channel-instrument>, <channel-period>, <channel-attenuation>,
-  ...
+  <channel-instrument>, <channel-panning>, <channel-note>+
 ]
 ```
 
-Channel data is a single array containing 3 slots for each row in the current pattern.
-The first slot indicates which instrument to use for playing notes. Slot 2 contains the note period and slot 3 holds the attenuation value. A `0` value indicates a noop for that slot.
-
+Channel data is a single array containing the instrument, panning and note data the current pattern.
+The first slot indicates which instrument to use for playing notes. Slot 2 contains the channel panning value and slots 3 onwards hold the note.
 
 ## `<channel-instrument>` structure
 
-This contains an index pointing to the songs instrument array. If it contains a non-zero value then instrument `value-1` is set as the current instrument for future notes.
-
-If you wish to use the same instrument for consecutive notes, you only need to set it once.
-
-```js
-[
-  1, 1, 0,        // Set instrument 1 and play C-1
-  0, 5, 0,        // Using current instrument (1), play E-1
-  0, 6, 0         // Using current instrument (1), play F-1
-  2, 3, 0         // Set instrument 2 and play D-1
-],
+```
+<integer>
 ```
 
+This contains an integer index pointing to the songs instrument array.
 
-## `<channel-period>` structure
+## `<channel-panning>` structure
 
-If this slot contains a value between 1 and 36 then the corresponding note will be played with the current instrument. When a new period is set any note currently playing in the channel is stopped and the channel attenuation is reset.
+```
+<number>
+```
+
+Set the stereo positioning of the song channel. A value of `-1` will cause the channel to play from the left speaker. A value of `1` will cause the channel to play from the right speaker. A value between `-1` and `1` will move the channel between the left and right speaker, with `0` causing the channel to play from both.
+
+## `<channel-note>` structure
+
+```
+<number>
+```
+
+The note value describes both the period and attenuation of a note. The period is the integer part of the number and the attentuation is the decimal part (`0` - `0.99`).
+
+If the period is a value between `1` and `36` the corresponding note will be played using the channel instrument. When a new period is set any note currently playing in the channel is stopped and the channel attenuation is reset. A note value of `0` indicates a noop and `-1` indicates note release (stops playing the note)
 
 Value | Note | Value | Note | Value | Note
 ------|------|-------|------|-------|-----
@@ -221,20 +225,19 @@ Value | Note | Value | Note | Value | Note
 `0b`  | A#1  | `17`  | A#2  | `23`  | A#3
 `0c`  | B-1  | `18`  | B-2  | `24`  | B-3
 
-
-## `<channel-attenuation>` structure
-
-If this slot contains a value between 1 and 64 the volume of the channel is reduced accordingly. A value of `1` sets the volume to 100%, `64` sets the volume to 0%.
+The attenuation component is used to control volume - here is an example of playing consecutive `C-1` notes while fading out:
 
 ```js
 [
-  1, 1, 0,        // Set instrument 1 and play C-1
-  0, 0, 16,       // Drop volume by 25%
-  0, 0, 32,       // Drop volume by 50%
-  0, 0, 48,       // Drop volume by 75%
-  2, 1, 0         // Set instrument 2 and play C-1 (Attenuation is reset)
-],
+  1,    // full volume
+  1.2,  // 80% volume
+  1.4,  // 60% volume
+  1.6,  // 40% volume
+  1.8   // 20% volume,
+  -1    // release (mute the note)
+]
 ```
+
 
 ## `<sequence>` structure
 
@@ -257,27 +260,8 @@ Sequence is an array of numbers indexing `<pattern>` entries in the `<pattern-li
 <integer>
 ```
 
-The speed of the song. Lower is faster. Default speed is 6.
+The speed of the song in BPM.
 
-
-## `<panning>` structure
-
-```
-[
-  <number>?,
-  ...
-]
-```
-
-Set the stereo positioning of each song channel. A value of `-1` will cause the channel to play from the left speaker. A value of `1` will cause the channel to play from the right speaker. A value between `-1` and `1` will move the channel between the left and right speaker, with `0` causing the channel to play from both.
-
-If no panning array is set the player will alternate channels between the left and right speakers, with even numbered channels playing from the left and odd channels from the right. If the panning array doesn't contain enough values for the number of channels in the song, the extra channels will default to `0` (centre)
-
-Some example:
-
-* `undefined` — Alternate channels between left and right speakers.
-* `[]` — Play all channels from both speakers.
-* `[-1,0,1]` — Play channel 0 from the left speaker, channel 1 from both (centred) and channel 2 from the right speaker
 
 ## `<metadata>` structure
 
@@ -304,8 +288,7 @@ const mySong = [
   ],
   [ /* ... patterns ... */ ],
   [ /* ... sequence ... */ ],
-  6,
-  [ /* ... panning ... */],
+  120,
   {
     title: "My Song",
     author: "Keith Clark",
