@@ -2,13 +2,16 @@
 zzfx=(...t)=>zzfxP(zzfxG(...t))
 
 // zzfxP() - the sound player -- returns a AudioBufferSourceNode
-zzfxP=(...t)=>{let e=zzfxX.createBufferSource(),f=zzfxX.createBuffer(t.length,t[0].length,44100);t.map((d,i)=>f.getChannelData(i).set(d)),e.buffer=f,e.connect(zzfxX.destination),e.start();return e}
+zzfxP=(...t)=>{let e=zzfxX.createBufferSource(),f=zzfxX.createBuffer(t.length,t[0].length,zzfxR);t.map((d,i)=>f.getChannelData(i).set(d)),e.buffer=f,e.connect(zzfxX.destination),e.start();return e}
 
 // zzfxG() - the sound generator -- returns an array of sample data
-zzfxG=(a=1,t=.05,h=220,M=0,n=0,r=.1,s=0,i=1,z=0,f=0,m=0,o=0,x=0,b=0,d=0,u=0,e=0,G=1,I=0,P=2*Math.PI,V=44100,c=(a=>2*a*Math.random()-a),g=(a=>0<a?1:-1),j=(z*=500*P/V**2),k=g(d)*P/4,l=(h*=(1+c(t))*P/V),p=99+M*V|0,q=I*V|0,v=n*V|0,w=r*V|0,y=e*V|0,A=500*f*P/V**3,B=d*P/V,C=m*P/V,D=o*V,E=x*V,F=p+q+v+w+y,H=[],J=0,K=0,L=0,N=1,O=0,Q=0,R=0)=>{for(;L<F;H[L++]=R)++Q>100*u&&(Q=0,R=J*h*Math.sin(K*B-k),R=g(R=s?1<s?2<s?3<s?Math.sin((R%P)**3):Math.max(Math.min(Math.tan(R),1),-1):1-(2*R/P%2+2)%2:1-4*Math.abs(Math.round(R/P)-R/P):Math.sin(R))*Math.abs(R)**i,R*=a*zzfxV*(L<p?L/p:L<p+q?1-(L-p)/q*(1-G):L<p+q+v?G:L<F-y?(F-L-y)/w*G:0),R=y?R/2+(y>L?0:(L<F-y?1:(L-F)/y)*H[L-y]/2):R),J+=1+c(b),K+=1+c(b),h+=z+=A,N&&++N>D&&(h+=C,l+=C,N=0),E&&++O>E&&(h=l,z=j,O=1,N=N||1);return H};
+zzfxG=(a=1,t=.05,h=220,M=0,n=0,s=.1,i=0,r=1,o=0,z=0,e=0,f=0,m=0,x=0,b=0,d=0,u=0,c=1,G=0,I=zzfxR,P=99+M*I,V=n*I,g=s*I,j=G*I,k=u*I,l=2*Math.PI,p=(a=>0<a?1:-1),q=P+j+V+g+k,v=(o*=500*l/I**2),w=(h*=(1+2*t*Math.random()-t)*l/I),y=p(b)*l/4,A=0,B=0,C=0,D=0,E=0,F=0,H=1,J=[])=>{for(;C<q;J[C++]=F)++E>100*d&&(E=0,F=A*h*Math.sin(B*b*l/I-y),F=p(F=i?1<i?2<i?3<i?Math.sin((F%l)**3):Math.max(Math.min(Math.tan(F),1),-1):1-(2*F/l%2+2)%2:1-4*Math.abs(Math.round(F/l)-F/l):Math.sin(F))*Math.abs(F)**r*a*zzfxV*(C<P?C/P:C<P+j?1-(C-P)/j*(1-c):C<P+j+V?c:C<q-k?(q-C-k)/g*c:0),F=k?F/2+(k>C?0:(C<q-k?1:(C-q)/k)*J[C-k|0]/2):F),A+=1-x+1e9*(Math.sin(C)+1)%2*x,B+=1-x+1e9*(Math.sin(C)**2+1)%2*x,h+=o+=500*z*l/I**3,H&&++H>f*I&&(h+=e*l/I,w+=e*l/I,H=0),m&&++D>m*I&&(h=w,o=v,D=1,H=H||1);return J};
 
 // zzfxV - global volume
 zzfxV=.3
+
+// zzfxR - global sample rate
+zzfxR=44100
 
 // zzfxX - the common audio context
 zzfxX=new(top.AudioContext||webkitAudioContext);
