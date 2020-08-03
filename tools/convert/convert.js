@@ -8,32 +8,34 @@ const EFFECT_CODE_VOLUME = 12;
 const EFFECT_CODE_PATTERN_BREAK = 13;
 const EFFECT_CODE_SPEED = 15;
 
+const calculateAttenuation = value => {
+  return 1 - Math.round(((value / 64.5)) * 100) / 100
+}
+
 export const convertSong = (buffer, options) => {
   let song = new ZzfxmSongFacade();
   let currentChannel = 0;
   let currentPattern = 0;
+  let currentPeriod = 0;
+  let currentInstrument = 0;
+  let currentAttenuation = 0;
   let currentRow = 0;
   let currentEffectCode = 0;
   let instrumentCount = 0;
   let instrumentMap = new Map();
   let currentSpeed = 0;
   let patternLength = 64;
+  let patternInstrumentList = new Map();
 
   parseProtracker(buffer, (token) => {
     let {type, value} = token;
 
     if (currentRow > patternLength && type !== 'patternEnd') {
-      return
+      return;
     }
 
     if (type === 'title') {
       song.title = value;
-    }
-    else if (type === 'channelCount') {
-      for (let c = 0; c < value; c++) {
-        song.setChannelPanning(c, c%2 === 0 ? -1 : 1);
-      }
-      song.setMeta('channels', value);
     }
     else if (type === 'sequence') {
       value.forEach((value, index) => {
@@ -55,18 +57,18 @@ export const convertSong = (buffer, options) => {
           // TODO: Apply sample volume to zzfx params
         }
         instrumentMap.set(instrumentCount, instrumentIndex);
+        song.setInstrumentCount(instrumentMap.size);
         song.setInstrument(instrumentIndex - 1, instrument);
-        song.setInstrumentName(instrumentIndex - 1, value.name);
+        song.setInstrumentName(instrumentIndex - 1, value.name || `Instrument ${instrumentMap.size}`);
       }
     }
     else if (type === 'pattern') {
       currentPattern = value;
-      // console.log(`Pattern ${currentPattern}`)
-      song.setPatternCount(currentPattern + 1)
-      song.setPatternChannelCount(currentPattern, 4);
+      song.setPatternCount(currentPattern + 1);
       song.setPatternRowCount(currentPattern, patternLength);
     } else if (type === 'patternEnd') {
       patternLength = 64;
+      patternInstrumentList.clear();
     }
     else if (type === 'row') {
       currentEffectCode = 0;
@@ -74,15 +76,40 @@ export const convertSong = (buffer, options) => {
     }
     else if (type === 'channel') {
       currentChannel = value;
+      currentInstrument = null;
+      currentAttenuation = 0;
+    }
+    else if (type === 'channelEnd') {
+      if (!currentInstrument) {
+        return;
+      }
+
+      let instrumentChannel = patternInstrumentList.get(currentInstrument);
+      if (instrumentChannel === undefined) {
+        instrumentChannel = patternInstrumentList.size
+        patternInstrumentList.set(currentInstrument, instrumentChannel);
+        song.setPatternChannelCount(currentPattern, instrumentChannel + 1);
+        song.setPatternRowCount(currentPattern, patternLength);
+        song.setChannelInstrument(currentPattern, instrumentChannel, currentInstrument - 1);
+        song.setChannelPanning(currentPattern, instrumentChannel, currentChannel % 2 === 0 ? -1 : 1);
+      }
+
+      if (currentPeriod) {
+        song.setNotePeriod(currentPattern, instrumentChannel, currentRow, currentPeriod);
+      }
+      if (currentAttenuation) {
+        song.setNoteAttenuation(currentPattern, instrumentChannel, currentRow, currentAttenuation);
+      }
+
     }
     else if (type === 'notePeriod') {
       if (value) {
         value = (70 - (Math.log(value) / Math.log(2) - 7) * 12 | 0) - 36;
       }
-      song.setNotePeriod(currentPattern, currentChannel, currentRow, value);
+      currentPeriod = value;
     }
     else if (type === 'noteInstrument') {
-      song.setNoteInstrument(currentPattern, currentChannel, currentRow, instrumentMap.get(value));
+      currentInstrument = instrumentMap.get(value);
     }
     else if (type === 'noteEffectCode') {
       currentEffectCode = value;
@@ -93,8 +120,7 @@ export const convertSong = (buffer, options) => {
     }
     else if (type === 'noteEffectParam') {
       if (currentEffectCode === EFFECT_CODE_VOLUME) {
-        value = 64 - Math.min(64, value);
-        song.setNoteAttenuation(currentPattern, currentChannel, currentRow, value);
+        currentAttenuation = calculateAttenuation(value);//64 - Math.min(64, value);
       }
 
       // ZzFXM doesn't support variable song speeds.
@@ -119,13 +145,19 @@ export const convertSong = (buffer, options) => {
           volumeSlideVal = -value;
         }
         if (currentRow > 0) {
-          const prevAttenutation = song.getNoteAttenuation(currentPattern, currentChannel, currentRow - 1);
-          const newAttenuation = Math.max(0, Math.min( prevAttenutation - volumeSlideVal, 64))
-          song.setNoteAttenuation(currentPattern, currentChannel, currentRow, newAttenuation);
+          let instrumentChannel = patternInstrumentList.get(currentInstrument);
+          if (!instrumentChannel) {
+            return
+          }
+          const prevAttenutation = song.getNoteAttenuation(currentPattern, instrumentChannel, currentRow - 1);
+          const newAttenuation = Math.max(0, Math.min( prevAttenutation - volumeSlideVal, 64));
+          currentAttenuation = calculateAttenuation(newAttenuation);
         }
       }
     }
   });
+
+  song.speed = 125 * 6 / song.speed;
 
   return song;
 }
