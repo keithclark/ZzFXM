@@ -15,11 +15,11 @@ const options = cli({
   inputPaths: 'single',
   outputPath: 'optional',
   options: [
-    { name: 'encode', type: Boolean, description: "Encode the pattern data as strings"},
-    { name: 'keep-slient-instruments', type: Boolean, description: "Don't remove any slient instruments (and notes using them) from the song"},
-    { name: 'keep-concurrent-instruments', type: Boolean, description: "Don't remove unnecessary repeated instrument codes from channel data"},
+    { name: 'keep-slient-instruments', type: Boolean, description: "Don't remove any slient instruments (and channels using them) from the song"},
+    { name: 'keep-unused-instruments', type: Boolean, description: "Don't remove unused instruments"},
+    { name: 'keep-unused-patterns', type: Boolean, description: "Don't remove unused patterns"},
     { name: 'keep-metadata', type: Boolean, description: "Don't remove song metadata" },
-    { name: 'keep-empty-channels', type: Boolean, description: "Don't trim empty trailing channels from song patterns'"},
+    { name: 'indexed-channels', type: Boolean, description: "Convert channels to indexed lookup tables to reduce repetition" }
   ]
 });
 
@@ -47,14 +47,7 @@ const processFile = async (src, dest, options) => {
   const packed = packSong(song, options, pluginResult => {
     const inputSize = pluginResult.input.length;
     const outputSize = pluginResult.output.length;
-    const message = `- ${pluginResult.name}: ${inputSize} -> ${outputSize}`;
-    if (outputSize < inputSize) {
-      console.log((message));
-    } else if (outputSize > inputSize) {
-      console.log((message));
-    } else {
-      console.log(message);
-    }
+    console.log(`- ${pluginResult.name}: ${inputSize} -> ${outputSize}`);
   });
   const gzippedBefore = await getZippedSize(buffer);
   const gzippedAfter = await getZippedSize(packed);
@@ -73,10 +66,10 @@ const process = async options => {
 
   await processFile(src, dest, {
     removeSilentInstruments: !options.keepSlientInstruments,
-    removeConcurrentInstruments: !options.keepConcurrentInstruments,
-    trimEmptyChannels: !options.keepEmptyChannels,
+    removeUnusedPatterns: !options.keepUnusedPatterns,
+    removeUnusedInstruments: !options.keepUnusedInstruments,
     removeMetadata: !options.keepMetadata,
-    encodePatternData: !!options.encode
+    convertChannelsToLookups: !!options.indexedChannels
   });
 };
 

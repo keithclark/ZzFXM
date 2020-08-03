@@ -9,9 +9,12 @@
  * @param {ZzfxmSongFacade} facade
  */
 const execute = facade => {
-  for (let instrumentIndex = facade.getInstrumentCount()-1; instrumentIndex >=0; instrumentIndex--) {
+
+  const instrumentCount = facade.getInstrumentCount()
+
+  for (let instrumentIndex = instrumentCount - 1; instrumentIndex >= 0; instrumentIndex--) {
     if (facade.getInstrument(instrumentIndex)[0] === 0) {
-      facade.deleteInstrument(instrumentIndex)
+      facade.deleteInstrument(instrumentIndex);
     }
   }
 }

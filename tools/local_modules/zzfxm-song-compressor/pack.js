@@ -1,26 +1,27 @@
-import removeConcurrentInstruments from './plugins/removeConcurrentInstruments.js';
-import trimEmptyChannels from './plugins/trimEmptyChannels.js';
 import removeMetadata from './plugins/removeMetadata.js';
-import encodePatternData from './plugins/encodePatternData.js';
 import removeSilentInstruments from './plugins/removeSilentInstruments.js';
+import convertChannelsToLookups from './plugins/convertChannelsToLookups.js';
+import removeUnusedPatterns from './plugins/removeUnusedPatterns.js';
+import removeUnusedInstruments from './plugins/removeUnusedInstruments.js';
 
 
 const getPluginList = options => {
   const plugins = [];
+
   if (options.removeSilentInstruments) {
     plugins.push(removeSilentInstruments);
   }
-  if (options.removeConcurrentInstruments) {
-    plugins.push(removeConcurrentInstruments);
+  if (options.removeUnusedPatterns) {
+    plugins.push(removeUnusedPatterns);
   }
-  if (options.trimEmptyChannels) {
-    plugins.push(trimEmptyChannels);
+  if (options.removeUnusedInstruments) {
+    plugins.push(removeUnusedInstruments);
   }
   if (options.removeMetadata) {
     plugins.push(removeMetadata);
   }
-  if (options.encodePatternData) {
-    plugins.push(encodePatternData);
+  if (options.convertChannelsToLookups) {
+    plugins.push(convertChannelsToLookups);
   }
   return plugins;
 }
