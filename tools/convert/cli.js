@@ -8,7 +8,7 @@ import { fileURLToPath } from 'url';
 const { readFile, writeFile } = promises;
 
 let options = cli({
-  name: 'ZzFXM Song Convertion Tool',
+  name: 'ZzFXM Song Conversion Tool',
   packageJson: resolve(dirname(fileURLToPath(import.meta.url)), 'package.json'),
   inputPaths: 'single',
   outputPath: 'optional',
@@ -30,9 +30,9 @@ const run = async (options) => {
 
   let instrumentCount = song.getInstrumentCount();
 
-   for (let i=0; i<instrumentCount;i++) {
+  for (let i = 0; i <= instrumentCount - 1; i++) {
     instrumentNames.push(song.getInstrumentName(i));
-    if (!song.getInstrument(i).length || !song.getInstrument(i)[0] === 0) {
+    if (!song.getInstrument(i).length || song.getInstrument(i)[0] === 0) {
       unassignedInstruments.push(song.getInstrumentName(i))
     } else {
       assignedInstruments.push(song.getInstrumentName(i))

@@ -25,7 +25,7 @@ export const prettyPrint = (src, instrumentNames = []) => {
 
       // If this is an instrument, add a comment to ease editing
       if (rootIndex === 0 && depth === 2) {
-        chr = `/* ${instrumentNames[parentIndex].substr(0,22).padEnd(24,' ')} */ ${chr}`;
+        chr = `/* ${(instrumentNames[parentIndex] || '').substr(0,22).padEnd(24,' ')} */ ${chr}`;
       }
 
       // If this is a pattern add a comment
