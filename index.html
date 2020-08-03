@@ -4,23 +4,24 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>ZzFXM Song Player - ZzFXM Music Player Examples</title>
-  <style>body {font:100%/1.5 Arial}button,select{font:inherit}h1+p{margin-bottom:3em}</style>
+  <style>body {font:100%/1.5 Arial}button,select{font:inherit}output{color:#888}</style>
 </head>
 <body>
-<h1><a href="https://github.com/keithclark/ZzFXM">ZzFXM</a> - Song Player Demo</h1>
-<p>ZzFXM is a music generator for use in tiny JavaScript productions (i.e. js13k games). ZzFXM uses a modified version of the super-tiny <a href="https://github.com/KilledByAPixel/ZzFX">ZzFX library</a> by <a href="https://twitter.com/KilledByAPixel" rel="nofollow">Frank Force</a> to generate instruments. Please see the <a href="https://github.com/keithclark/ZzFXM">ZzFXM github repo</a> for more information.</p>
-
+<h1>ZzFXM Song Player Demo</h1>
 <p>Select a song and click play:</p>
-<label>Song:
-  <select id="song">
-    <option value="sanxion">Sanxion</option>
-    <option value="cuddly">Cuddly Demos (Main menu)</option>
-    <option value="iamback">I am back</option>
-  </select>
-</label>
-
-<button id="playBtn">Play</button>
-<button id="stopBtn">Stop</button>
+<fieldset id="player">
+  <legend>Select a song</legend>
+  <label>Song:
+    <select id="song">
+      <option value="sanxion">Sanxion</option>
+      <option value="cuddly">Cuddly Demos (Main menu)</option>
+      <option value="iamback">I am back</option>
+    </select>
+  </label>
+  <button id="playBtn">Play</button>
+  <button id="stopBtn">Stop</button>
+  <output id="songStatus"></output>
+</fieldset>
 
 <script src="zzfx.js"></script>
 <script src="zzfxm.min.js"></script>
@@ -30,52 +31,81 @@
   let buffer;
   let node;
 
+  // Loads a song (ESM)
   const load = async name => {
-    let module = await import(`./songs/${name}.js`);
-    buffer = zzfxM(...module.default);
+    return (await import(`./songs/${name}.js`)).default;
   }
 
-  const change = async e => {
-    await load(e.target.value);
-    if (node) {
+  // Renders the song. ZzFXM blocks the main thread so defer execution for a few
+  // ms so that any status message change can be repainted.
+  const render = song => {
+    return new Promise(resolve => {
+      setTimeout(() => resolve(zzfxM(...song)), 50);
+    });
+  }
+
+  // Sets the current song to the value selected in the UI
+  const setSong = async () => {
+
+    const isPlaying = !!node;
+
+    songPlayerElem.disabled = true;
+
+    if (isPlaying) {
       await stop();
-      await play();
     }
+
+    songStatusElem.textContent = 'Loading...';
+    const song = await load(songSelectElem.value);
+
+    songStatusElem.textContent = 'Rendering...';
+    buffer = await render(song);
+
+    if (isPlaying) {
+      await play();
+    } else {
+      songStatusElem.textContent = 'Ready.';
+    }
+    songPlayerElem.disabled = false;
   }
 
   // Play the tune
   const play = async () => {
-    if (!node) {
-      // Resume the AudioContext (saves CPU usage when a song isn't playing)
-      await zzfxX.resume();
-
-      // play the song and loop it
-      node = zzfxP(...buffer);
-      node.loop = true;
+    if (node) {
+      return;
     }
+    node = zzfxP(...buffer);
+    node.loop = true;
+    await zzfxX.resume();
+    songStatusElem.textContent = 'Playing...';
   }
 
   // Stop playing the tune
   const stop = async () => {
-    if (node) {
-      node.stop();
-      node.disconnect(); // prevent memory leaks
-      node = null;
+    if (!node) {
+      return
     }
-    // This reduces CPU usage when a song isn't playing
     await zzfxX.suspend();
+    node.stop();
+    node.disconnect();
+    node = null;
+    songStatusElem.textContent = 'Stopped.';
   }
 
+  const songPlayerElem = document.getElementById('player');
   const songSelectElem = document.getElementById('song');
   const songPlayElem = document.getElementById('playBtn');
   const songStopElem = document.getElementById('stopBtn');
+  const songStatusElem = document.getElementById('songStatus');
 
   songPlayElem.addEventListener('click', play);
   songStopElem.addEventListener('click', stop);
-  songSelectElem.addEventListener('change', change);
+  songSelectElem.addEventListener('change', setSong);
 
+  // This reduces CPU usage when a song isn't playing
+  zzfxX.suspend();
   stop();
-  load(songSelectElem.value);
+  setSong();
 </script>
 </body>
 </html>
