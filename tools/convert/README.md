@@ -16,7 +16,7 @@ npm install
 From the `tools/convert` dir you can run:
 
 ```
-> ./bin/zzfx-convert mysong.mod --out mysong.js
+> ./bin/zzfx-convert input-song.mod output-song.js
 ```
 
 ## Options
