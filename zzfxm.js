@@ -1,5 +1,5 @@
 /**
- * ZzFX Music Renderer v2.0.0 by Keith Clark
+ * ZzFX Music Renderer v2.0.1 by Keith Clark
  */
 
 /**
@@ -78,7 +78,7 @@ const zzfxM = (instruments, patterns, sequence, BPM = 125) => {
         note = patternChannel[i];
 
         // stop if different instrument or new note
-        stop = instrument != patternChannel[0] | note | 0;
+        stop = instrument != (patternChannel[0] || 0) | note | 0;
 
         // fill buffer with samples for previous beat, most cpu intensive part
         for (j = 0; j < beatLength && notFirstBeat;
