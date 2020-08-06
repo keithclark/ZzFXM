@@ -9,7 +9,7 @@ const EFFECT_CODE_PATTERN_BREAK = 13;
 const EFFECT_CODE_SPEED = 15;
 
 const calculateAttenuation = value => {
-  return 1 - Math.round(((value / 64.5)) * 100) / 100
+  return 1 - Math.round(((Math.min(64, value) / 64.5)) * 100) / 100
 }
 
 export const convertSong = (buffer, options) => {
