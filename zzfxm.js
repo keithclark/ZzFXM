@@ -50,6 +50,7 @@ const zzfxM = (instruments, patterns, sequence, BPM = 125) => {
   let leftChannelBuffer = [];
   let rightChannelBuffer = [];
   let channelIndex = 0;
+  let panning;
   let hasMore = 1;
   let sampleCache = {};
   let beatLength = zzfxR / BPM * 60 >> 2;
@@ -88,14 +89,15 @@ const zzfxM = (instruments, patterns, sequence, BPM = 125) => {
         ) {
           // copy sample to stereo buffers with panning
           sample = (1 - attenuation) * sampleBuffer[sampleOffset++] / 2 || 0;
-          leftChannelBuffer[k] = (leftChannelBuffer[k] || 0) + sample * patternChannel[1] - sample;
-          rightChannelBuffer[k] = (rightChannelBuffer[k++] || 0) + sample * patternChannel[1] + sample;
+          leftChannelBuffer[k] = (leftChannelBuffer[k] || 0) + sample * panning - sample;
+          rightChannelBuffer[k] = (rightChannelBuffer[k++] || 0) + sample * panning + sample;
         }
 
         // set up for next note
         if (note) {
           // set attenuation
           attenuation = note % 1;
+          panning = patternChannel[1];
           if (note |= 0) {
             // get cached sample
             sampleBuffer = sampleCache[
