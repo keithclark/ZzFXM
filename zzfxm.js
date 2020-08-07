@@ -30,7 +30,7 @@
  * @returns {Array.<Array.<Number>>} Left and right channel sample data.
  */
 
-const zzfxM = (instruments, patterns, sequence, BPM = 125) => {
+zzfxM = (instruments, patterns, sequence, BPM = 125) => {
   let instrumentParameters;
   let i;
   let j;
@@ -97,7 +97,7 @@ const zzfxM = (instruments, patterns, sequence, BPM = 125) => {
         if (note) {
           // set attenuation
           attenuation = note % 1;
-          panning = patternChannel[1];
+          panning = patternChannel[1] || 0;
           if (note |= 0) {
             // get cached sample
             sampleBuffer = sampleCache[

@@ -182,7 +182,7 @@ Param | Description | Default | Min Value | Max Value
 ```
 
 Channel data is a single array containing the instrument, panning and note data the current pattern.
-The first slot indicates which instrument to use for playing notes. Slot 2 contains the channel panning value and slots 3 onwards hold the note.
+The first slot indicates which instrument to use for playing notes. Slot 2 contains the channel panning value and slots 3 onwards hold the note. If the array slot for an instrument, panning or note value is left empty it will coalesced to `0`.
 
 ## `<channel-instrument>` structure
 
