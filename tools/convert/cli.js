@@ -58,7 +58,7 @@ const run = async (options) => {
   if (options.paths[1]) {
     dest = options.paths[1];
   } else if (song.title) {
-    dest = `${song.title}.js`
+    dest = `${song.title}.js`;
   } else {
     dest = 'song.js';
   }
@@ -76,4 +76,11 @@ const run = async (options) => {
   console.log(`\nFile "${dest}" written successfully.`);
 }
 
-run(options);
+
+run(options).catch(e => {
+  let {message, code} = e;
+  if (code == 'ENOENT') {
+    message = `File '${e.path}' not found.`;
+  }
+  console.log(message);
+});

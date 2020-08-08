@@ -83,7 +83,7 @@ export const parse = (buffer, cb) => {
     sampleCount = 31;
     channelCount = 4;
   } else {
-    throw new Error('Unknown format');
+    throw new Error('Invalid file format');
   }
 
   const sequence = parseSequences(buffer);
