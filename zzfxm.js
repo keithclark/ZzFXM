@@ -1,5 +1,5 @@
 /**
- * ZzFX Music Renderer v2.0.1 by Keith Clark
+ * ZzFX Music Renderer v2.0.2 by Keith Clark
  */
 
 /**
