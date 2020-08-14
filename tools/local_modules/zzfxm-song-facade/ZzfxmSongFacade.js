@@ -11,7 +11,7 @@ const META_INDEX = 4;
 
 export class ZzfxmSongFacade {
 
-  constructor(data = [[],[],[], 6]) {
+  constructor(data = [[],[],[], 125]) {
     this._data = data;
     this._length = null;
   }
