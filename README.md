@@ -276,7 +276,7 @@ Metadata is used to store song information that isn't required for playback such
 
 Property | Description
 -|-
-`name` | Title of the song
+`title` | Title of the song
 `author` | Name of the composer
 `instruments` | Array of instrument names that map to `<instrument-list>`
 
