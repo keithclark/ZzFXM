@@ -245,7 +245,7 @@ function Update()
         if (wantsToExport)
         {
             const filename = (inputName.value.trim() || 'zzfxm') + '.wav';
-            const saveMusic = FormatMusic();
+            const saveMusic = FormatMusic(music);
 
             linkSave.href = BuildWaveDataUrl(zzfxM(...saveMusic));
             linkSave.download = filename;
@@ -253,24 +253,29 @@ function Update()
         }
         else
         {
-            const newMusic = FormatMusic(0);
-           
+            let newMusic = [...music];
             if (radioPlayPattern.checked)
             {
                 // only play the active sequence
+                newMusic[2] = [...newMusic[2]];
                 newMusic[2][0] = newMusic[2][activeSequence] || [];
                 newMusic[2].length = 1;
-                
+            
                 // fix up song sequence to point to active sequence
-                songSequence = GetSongSequence(...newMusic);
+                const musicSequence = [...music];
+                musicSequence[2] = [...musicSequence[2]];
+                musicSequence[2][0] = musicSequence[2][activeSequence] || [];
+                musicSequence[2].length = 1;
+                songSequence = GetSongSequence(...musicSequence);
                 songSequence = songSequence.map(e=>[activeSequence, e[1]]);
             }
             else
-                songSequence = GetSongSequence(...newMusic);
+                songSequence = GetSongSequence(...music);
             
+            newMusic = FormatMusic(newMusic);
             songSequenceBPM = inputBPM.value*1;
             activeMusicSound && activeMusicSound.stop();
-            activeMusicSound = PlaySamplesArray(zzfxM(...UnconvertMusic(...newMusic)), inputLoop.checked);
+            activeMusicSound = PlaySamplesArray(zzfxM(...newMusic), inputLoop.checked);
             startTime = Date.now();
             
             if (activeMusicSound)
@@ -335,7 +340,7 @@ function Reset()
     inputName.value = '';
     inputLoop.checked = 0;
     inputVolume.value = 50;
-    radioPlaySong.checked = 1;
+    radioPlaySong.checked = true;
 
     RebuildPiano();
     RebuildDisplay();
@@ -482,7 +487,7 @@ function DisableInputs(disabled = true)
 function ButtonSave()
 {
     const filename = (inputName.value.trim() || 'music') + '.zzfxm';
-    const saveMusic = FormatMusic();
+    const saveMusic = FormatMusic(music);
     const musicString = ArrayToString(saveMusic);
     
     linkSave.href = URL.createObjectURL(new Blob([musicString]));
@@ -517,7 +522,7 @@ function ButtonReset()
 
 function ButtonShare()
 {
-    const crushed = JSONCrush(JSON.stringify(FormatMusic()));
+    const crushed = JSONCrush(JSON.stringify(FormatMusic(music)));
     let search = '&name=' + encodeURIComponent(inputName.value.trim());
     search += '&crushed=' + crushed;
     
@@ -1003,7 +1008,7 @@ function PianoKey(event)
 {
     const k = 'ZSXDCVGBHNJM,L.;/Q2W3ER5T6Y7UI9O0P[=]'    // map key to note
         .indexOf(event.key && event.key.toUpperCase());  // find the key and check for invalid key
-    return k < 0 ? 0 : k - 5 * (k > 16);                 // offset second row of 
+    return k - 5 * (k > 16);                             // offset second row of 
 };
   
 function ValidateMusic(music)
@@ -1092,7 +1097,7 @@ function GetSongSequence(instruments, patterns, sequence, BPM = defaultBPM)
     sequence.map((sequencePatterns, sequenceIndex) =>
     {
         // get length of longest pattern channel
-        longestPattern = sequencePatterns.reduce((a,b)=>Math.max(a, patterns[b].length), 0);
+        longestPattern = sequencePatterns.reduce((a,b)=>patterns[b] ? Math.max(a, patterns[b].length) : a, 0);
 
         // for each beat in pattern
         for (let i = 2; i < longestPattern; ++i)
@@ -1167,7 +1172,7 @@ function BuildWaveDataUrl(samplesArray)
 // conversion to and from internal format
 
 // prepare music for saving
-function FormatMusic(unconvert = 1)
+function FormatMusic(music)
 {
     const newMusic = [[],[],[], inputBPM.value*1];
     
@@ -1179,12 +1184,12 @@ function FormatMusic(unconvert = 1)
             music[2][i] = [];
     
         const pattern = music[2][i][j];
-        if (pattern == undefined)
+        if (pattern == undefined || music[1][pattern] == undefined)
             continue;
 
         if (newMusic[2][i] == undefined)
             newMusic[2][i] = [];
-        newMusic[2][i][j] = pattern;
+        newMusic[2][i].push(pattern);
     }
     
     // patterns
@@ -1201,6 +1206,7 @@ function FormatMusic(unconvert = 1)
         let newPatternLength = 0;
         for(let j = 0; j < maxPatternLength+2; ++j)
         {
+            // look for pattern ends
             let value = pattern[j];
             if (value == -2)
             {
@@ -1226,7 +1232,7 @@ function FormatMusic(unconvert = 1)
         newMusic[0][i] = zzfxParameters;
     }
     
-    return unconvert ? UnconvertMusic(...newMusic) : newMusic;
+    return UnconvertMusic(...newMusic);
 }
 
 // convert from zzfxm to internal format
