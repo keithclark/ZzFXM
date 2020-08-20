@@ -534,14 +534,14 @@ function ButtonShare()
 {
     wantsToShare = wantsToPlay = 2;
     divLoadingMessage.style.display = 'block';
-    divLoadingMessage.innerHTML = 'Copying Link to Clipboard';
+    divLoadingMessage.innerHTML = 'Copying Link<br>To Clipboard';
 }
 
 function ButtonExportWav()
 {
     wantsToExport = wantsToPlay = 2;
     divLoadingMessage.style.display = 'block';
-    divLoadingMessage.innerHTML = 'Exporting';
+    divLoadingMessage.innerHTML = 'Exporting<br>Song';
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -926,7 +926,7 @@ function PlayMusic()
 {
     SaveLocalStorage();
     divLoadingMessage.style.display = 'block';
-    divLoadingMessage.innerHTML = 'Loading';
+    divLoadingMessage.innerHTML = 'Rendering<br>Song';
     wantsToPlay = 2;
 }
 
