@@ -1093,6 +1093,25 @@ function GetSongSequence(instruments, patterns, sequence, BPM = defaultBPM)
         instrument, pitch, notFirstBeat, songSequence = [],
         channelIndex = 0, channelCount = sequence.reduce((a,b)=>Math.max(a, b.length), 0);
 
+    // patterns
+    patterns = [...patterns];
+    let maxInstrument = 0;
+    for(let i = 0; i < patterns.length; ++i)
+    {
+        // make copy of pattern
+        let p = patterns[i] = [...patterns[i]];
+        
+        // look for pattern ends
+        for(let j = 0; j < maxPatternLength+2; ++j)
+        {
+            if (p[j] == -2)
+            {
+                p.length = j;
+                break;
+            }
+        }
+    }
+
     // for each sequence of patterns
     sequence.map((sequencePatterns, sequenceIndex) =>
     {
