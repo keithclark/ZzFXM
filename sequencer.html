@@ -1109,6 +1109,9 @@ function GetSongSequence(instruments, patterns, sequence, BPM = defaultBPM)
     let maxInstrument = 0;
     for(let i = 0; i < patterns.length; ++i)
     {
+        if (!patterns[i])
+            continue;
+    
         // make copy of pattern
         let p = patterns[i] = [...patterns[i]];
         
