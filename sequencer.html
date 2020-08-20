@@ -226,6 +226,7 @@ let activePatternRow;
 let activePatternColumn;
 let wantsToPlay;
 let wantsToExport;
+let wantsToShare;
 let songSequence;
 let songSequenceBPM;
 let startTime;
@@ -250,6 +251,16 @@ function Update()
             linkSave.href = BuildWaveDataUrl(zzfxM(...saveMusic));
             linkSave.download = filename;
             linkSave.click();
+        }
+        else if (wantsToShare)
+        {
+            const crushed = JSONCrush(JSON.stringify(FormatMusic(music)));
+            let search = '&name=' + encodeURIComponent(inputName.value.trim());
+            search += '&crushed=' + crushed;
+
+            const url = new URL(window.location.href);
+            url.search = search;
+            CopyToClipboard(url.toString());
         }
         else
         {
@@ -283,7 +294,7 @@ function Update()
         }
         
         divLoadingMessage.style.display = 'none';
-        wantsToExport = wantsToPlay = 0;
+        wantsToExport = wantsToShare = wantsToPlay = 0;
     }
     
     gain.gain.value = inputVolume.value/100;
@@ -522,13 +533,9 @@ function ButtonReset()
 
 function ButtonShare()
 {
-    const crushed = JSONCrush(JSON.stringify(FormatMusic(music)));
-    let search = '&name=' + encodeURIComponent(inputName.value.trim());
-    search += '&crushed=' + crushed;
-    
-    const url = new URL(window.location.href);
-    url.search = search;
-    prompt('Share Url', url.toString());
+    wantsToShare = wantsToPlay = 2;
+    divLoadingMessage.style.display = 'block';
+    divLoadingMessage.innerHTML = 'Copying Link to Clipboard';
 }
 
 function ButtonExportWav()
@@ -792,37 +799,41 @@ function LoadString(string, name, validate = 1, convert = 1)
     RebuildDisplay();
     StopMusic();
     
-    music = StringToMusic(string, validate);
-    if (convert)
-        music = ConvertMusic(...music);
-    music[0].length = Clamp(music[0].length, maxInstruments);
-    music[1].length = Clamp(music[1].length, maxPatterns);
-    music[2].length = Clamp(music[2].length, maxSequenceLength);
-    
-    // add -2 to end of patterns
-    music[1].map(p=>!p || p[p.length-1] == -2 || p.length<=2 || p.length == maxPatternLength || (p[p.length] = -2));
-    
-    // sequence
-    for(let i = 0; i < music[2].length; ++i)
-    for(let j = 0; j < maxChannels; ++j)
+    try
     {
-        if (!music[2][i])
-             music[2][i] = [];
+        music = StringToMusic(string, validate);
+        if (convert)
+            music = ConvertMusic(...music);
+        music[0].length = Clamp(music[0].length, maxInstruments);
+        music[1].length = Clamp(music[1].length, maxPatterns);
+        music[2].length = Clamp(music[2].length, maxSequenceLength);
+
+        // add -2 to end of patterns
+        music[1].map(p=>!p || p[p.length-1] == -2 || p.length<=2 || p.length == maxPatternLength || (p[p.length] = -2));
+
+        // sequence
+        for(let i = 0; i < music[2].length; ++i)
+        for(let j = 0; j < maxChannels; ++j)
+        {
+            if (!music[2][i])
+                 music[2][i] = [];
+
+            const patternID = music[2][i][j];
+            const e = document.getElementById(`inputSequence${i}_${j}`);
+            e.value = patternID == undefined ? '' : patternID || 0;
+        }
+
+        // instruments
+        for(let i = 0; i < maxInstruments; ++i)
+            LoadInstrument(i, music[0][i]);
+
+        inputBPM.value = music[3] || defaultBPM;
+        inputName.value = name;
     
-        const patternID = music[2][i][j];
-        const e = document.getElementById(`inputSequence${i}_${j}`);
-        e.value = patternID == undefined ? '' : patternID || 0;
+        SetActiveSequence(0);
+        SaveLocalStorage();
     }
-    
-    // instruments
-    for(let i = 0; i < maxInstruments; ++i)
-        LoadInstrument(i, music[0][i]);
-        
-    inputBPM.value = music[3] || defaultBPM;
-    inputName.value = name;
-    
-    SetActiveSequence(0);
-    SaveLocalStorage();
+    catch(e) { console.log(e); Reset(); }
 }
 
 function PianoPress(key)
@@ -1185,6 +1196,17 @@ function BuildWaveDataUrl(samplesArray)
     const b = new Blob(blobData, {type:'audio/wav'});
     const URLObject = webkitURL || URL;
     return URLObject.createObjectURL(b);
+}
+
+function CopyToClipboard(text)
+{
+    if (!navigator.clipboard)
+    {
+        alert('Unable to copy to clipboard.');
+        return false;
+    }
+    navigator.clipboard.writeText(text);
+    return true;
 }
 
 /////////////////////////////////////////////////////////////////////////////
