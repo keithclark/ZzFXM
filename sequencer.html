@@ -371,10 +371,9 @@ function RebuildPiano()
     let outHTML = '';
     for(let i = 0; i < 12; ++i)
     {
-        const note = 11 - i + inputKey.value*1 + inputOctave.value*12;
+        const note = 23 - i + inputKey.value*1 + inputOctave.value*12;
         const isWhite = '02479'.indexOf( i%12 - 1 ) < 0;
-        outHTML += `<div id=pianoKey${i} onmousedown=PianoPress(${i}) class=${isWhite?'pianoKey':'blackKey'}>${
-            note ? NoteName(note) : 'C-0'}</div>`;
+        outHTML += `<div id=pianoKey${i} onmousedown=PianoPress(${i}) class=${isWhite?'pianoKey':'blackKey'}>${NoteName(note)}</div>`;
     }
     
     divPiano.innerHTML = outHTML;
@@ -851,7 +850,7 @@ function PianoPress(key)
     k.style.transition = '.5s';      // set transition
     k.style.background = background; // set old background
 
-    let note = 11 - key + inputKey.value*1 + inputOctave.value*12;
+    let note = 23 - key + inputKey.value*1 + inputOctave.value*12;
    
     if (activePatternRow <= 1 || patternID == undefined)
     {
