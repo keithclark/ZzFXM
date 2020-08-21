@@ -143,16 +143,14 @@ Key <input type=number id=inputKey style=width:50 value=0 oninput=SetKey()>
 
 <p>Show Help <input type=checkbox onclick="divHelp.style.display=divHelp.style.display?'':'none'">
 <div id=divHelp style=display:none>
-<b>Pattern Controls</b>
-<br>Keys = Play Note
-<br>Up/Down = Note Volume
+<b>Controls</b>
+<br>Keyboards = Play Note
+<br>Arrows = Move Selection
+<br>PgUp/PgDown = Note Volume
+<br>Enter or Home = Set Note Stop
+<br>Ctrl or End = Set Pattern End
 <br>Delete = Remove Note
-<br>Enter = Stop Note
-<br>Space = End Pattern
-<p>
-<b>Tips</b>
-<br>Space Toggles Play
-<br>Make instruments with <a href=https://killedbyapixel.github.io/ZzFX target=_blank>ZzFX</a>
+<br>Space = Toggle Play
 </div>
 </div>
 
@@ -646,24 +644,47 @@ function NoteEvent(e, beat, channel)
     let n;
     const note = PianoKey(e) + inputKey.value*1 + inputOctave.value*12 + 12;
     const value = 
-        e.keyCode == 8  ?  0 :               // delete = clear
-        e.keyCode == 13 ? -1 :               // enter = stop
-        e.keyCode == 32 ? -2 :               // space = end
-        e.keyCode == 38 || e.keyCode == 40 ? // up/down = volume
+        e.keyCode == 8 || e.keyCode == 46  ?  0 : // delete = clear
+        e.keyCode == 36 || e.keyCode == 13 ? -1 : // home or enter = stop
+        e.keyCode == 35 || e.keyCode == 17 ? -2 : // end or control = end
+        e.keyCode == 33 || e.keyCode == 34 ?      // up/down = volume
         (
             n = oldNote > 0 ? oldNote : 0,
-            (n|0) + ((n*10%10 + 10 + (e.keyCode - 39)) / 10)%1
+            (n|0) + ((n*10%10 + 10 + (e.keyCode == 33 ? -1 : 1)) / 10)%1
         ) :
         PianoKey(e) >= 0 ? note : // note
         -3; // no valid input
+        
+    let moveX = 0, moveY = 0;
+    if (e.keyCode == 37)
+        moveX = -1;
+    if (e.keyCode == 39)
+        moveX = 1;
+    if (e.keyCode == 38)
+        moveY = -1;
+    if (e.keyCode == 40 || e.keyCode == 9)
+        moveY = 1;
 
-    if ((value > -3 || e.keyCode == 9) && e.keyCode != 38 && e.keyCode != 40)
+    if (value > -3 && e.keyCode != 33 && e.keyCode != 34)
+        moveY = 1;
+    
+    if (moveX || moveY)
+    if (beat+moveY >= 0)
     {
-        // go to next
-        const next = document.getElementById(`inputPattern${beat+3}_${channel}`);
-        next && next.focus();
         e.preventDefault();
-        SetActivePatternNote(beat+3, channel);
+        
+        // skip empty patterns and loop around
+        let newChannel = (channel+moveX + maxChannels) % maxChannels
+        while(music[2][activeSequence][newChannel] == undefined)
+            newChannel = (newChannel + moveX + maxChannels) % maxChannels;
+    
+        // go to next
+        const next = document.getElementById(`inputPattern${beat+2+moveY}_${newChannel}`);
+        if (next)
+        {
+            next.focus();
+            SetActivePatternNote(beat+2+moveY, newChannel);
+        }
     }
 
     if (value > -3)
@@ -869,9 +890,11 @@ function PianoPress(key)
 
 onkeydown = e=>
 {
-    if (e.keyCode == 38 || e.keyCode == 40)
+    const ignoreKeys = [38, 40, 33, 34]
+
+    if (ignoreKeys.includes(e.keyCode))
         e.preventDefault();
-    else if (e.keyCode == 32 && e.target.localName != 'input')
+    else if (e.keyCode == 32)
     {
         e.preventDefault();
         activeMusicSound ? StopMusic() : PlayMusic();
