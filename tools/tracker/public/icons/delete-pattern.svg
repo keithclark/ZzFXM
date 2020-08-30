@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="23px" height="23px" viewBox="0 0 23 23" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 63.1 (92452) - https://sketch.com -->
+    <title>delete-pattern</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Delete-Pattern">
+            <rect id="Rectangle" stroke="#BBBBBB" x="0.5" y="3.5" width="22" height="16"></rect>
+            <rect id="Rectangle" fill="#BBBBBB" x="2" y="5" width="4" height="13"></rect>
+            <rect id="Rectangle" fill="#BBBBBB" x="7" y="5" width="4" height="13"></rect>
+            <rect id="Rectangle" fill="#BBBBBB" x="12" y="5" width="4" height="13"></rect>
+            <rect id="Rectangle" fill="#BBBBBB" x="17" y="5" width="4" height="13"></rect>
+            <path d="M19.9374694,10.2928626 L16.5001271,13.7307998 L13.062516,10.2928772 L10.2928772,13.062516 L13.7307998,16.5001271 L10.2928626,19.9374694 L13.0625014,22.7071082 L16.5001271,19.2694545 L19.937484,22.7071228 L22.7071228,19.937484 L19.2694545,16.5001271 L22.7071082,13.0625014 L19.9374694,10.2928626 Z" id="Path" stroke="#FFFFFF" fill="#CC0000"></path>
+        </g>
+    </g>
+</svg>

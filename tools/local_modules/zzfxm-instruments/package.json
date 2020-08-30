@@ -1,0 +1,12 @@
+{
+  "name": "zzfxm-instruments",
+  "version": "1.0.0",
+  "description": "A library of instruments for use with ZzFXM",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Keith Clark",
+  "license": "MIT",
+  "type": "module"
+}
