@@ -1,0 +1,94 @@
+:root {
+  --inset-color: #999;
+  --outset-color: #aaa;
+  --toolbar-color: #c2c2c2;
+  --button-color: #7897b7;
+  --button-color-hover: #68829c;
+  --button-color-press: #566472;
+  --focus-ring-color: #000;
+  --active-selection-color: #bbb;
+  --panel-spacing: 16px;
+  --modal-spacing: 8px;
+  --input-padding: 1px;
+  --field-padding: 3px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin:0;
+  padding:0
+}
+
+body {
+  font: 82%/1.5 'Share Tech Mono', monospace;
+  background: #b4b4b4;
+  letter-spacing: -0.05em;
+  overscroll-behavior: none;
+}
+
+.input {
+  border: none;
+  background: #999;
+  font: inherit;
+  text-indent: 2px;
+  margin: 0;
+  padding: var(--input-padding);
+}
+
+.select {
+  border: none;
+  background: transparent;
+  font: inherit;
+  padding: var(--input-padding);
+  max-width: 100%;
+  margin:0
+}
+
+option {
+  padding: var(--input-padding);
+}
+
+option:checked {
+  box-shadow: inset 0 0 0 99em var(--active-selection-color);
+  color:#000 !important;
+}
+
+.input[type="text"],
+.input[type="number"],
+.select {
+  border-radius: 0;
+  background:#999c90;
+  color:#232;
+  box-shadow: inset -.5px -.5px 1px #0004;
+}
+
+.embossed {
+  color:#000a;
+  text-shadow: 1px 1px 0 #fff6;
+}
+
+.inset {
+  box-shadow: inset -1px -1px 0 #fff8, inset 1px 1px 0 #0003;
+  padding:1px;
+  background-color: var(--inset-color);
+}
+
+.outset {
+  box-shadow: inset -1px -1px 0 #0004, inset 1px 1px 0 #fff6;
+  padding:1px;
+  background-color: var(--outset-color)
+}
+
+.splitView {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--panel-spacing);
+}
+
+:focus {
+  outline: none;
+  box-shadow: inset 0 0 1px 1px var(--focus-ring-color) !important;
+}
