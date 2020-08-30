@@ -44,6 +44,7 @@ zzfxM = (instruments, patterns, sequence, BPM = 125) => {
   let pitch;
   let attenuation;
   let outSampleOffset;
+  let isSequenceEnd;
   let sampleOffset = 0;
   let nextSampleOffset;
   let sampleBuffer = [];
@@ -79,7 +80,7 @@ zzfxM = (instruments, patterns, sequence, BPM = 125) => {
         note = patternChannel[i];
 
         // stop if end, different instrument or new note
-        stop = i == patternChannel.length + isSequenceEnd - 1 && isSequenceEnd || 
+        stop = i == patternChannel.length + isSequenceEnd - 1 && isSequenceEnd ||
             instrument != (patternChannel[0] || 0) | note | 0;
 
         // fill buffer with samples for previous beat, most cpu intensive part
@@ -110,7 +111,7 @@ zzfxM = (instruments, patterns, sequence, BPM = 125) => {
                 // add sample to cache
                 instrumentParameters = [...instruments[instrument]],
                 instrumentParameters[2] *= 2 ** ((note - 12) / 12),
-                
+
                 // allow negative values to stop notes
                 note > 0 ? zzfxG(...instrumentParameters) : []
             );
