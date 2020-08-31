@@ -1,23 +1,24 @@
 <script>
 import { NOTE_KEY_CODES } from '../config.js';
 
-const getKeyMapForNote = note => {
-  return Object.entries(NOTE_KEY_CODES).find(([key, index]) => index === note);
-};
+$: keys = Object.entries(NOTE_KEY_CODES).sort((a,b) => a[1] - b[1]).map(([x]) => x);
 
 const handleClick = event => {
-  const {target, button} = event;
+  const { target, button } = event;
   if (button === 0) {
-    const event = new KeyboardEvent('keydown', {key: target.dataset.note});
+    target.focus()
+    const event = new KeyboardEvent('keydown', {
+      key: target.dataset.note
+    });
     window.dispatchEvent(event);
   }
 };
 </script>
 
 <div class="inset">
-  {#each {length: 36} as _, i}
-    <span data-note={getKeyMapForNote(i + 1)[0]} on:mousedown={handleClick}>
-      {getKeyMapForNote(i + 1)[0].toUpperCase()}
+  {#each keys as key}
+    <span tabindex="0" data-note={key} on:mousedown={handleClick}>
+      {key.toUpperCase()}
     </span>
   {/each}
 </div>
@@ -27,8 +28,6 @@ const handleClick = event => {
     display: flex;
     align-items: flex-start;
     padding: var(--field-padding);
-    width:75%;
-    margin: auto;
   }
   span {
     padding-top: 76px;
