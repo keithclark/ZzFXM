@@ -1,10 +1,13 @@
 <script>
 
 	import demoSong from './demo.js';
-  import { patterns, sequence, speed, title, selectedRow, selectedPattern, selectedSequence, masterVolume, currentPlaybackPosition, songPlaying } from './stores.js';
-  import { setSong, serializeSong, createEmptySong, loadSongFromFile, loadSongFromString } from './services/SongService.js';
-  import { playPattern, playSong, stopSong } from './services/RendererService.js';
+  import { patterns, sequence, speed, title, selectedRow, selectedChannel, selectedPattern, selectedSequence, masterVolume, currentPlaybackPosition, songPlaying } from './stores.js';
+  import { serializeSong, createEmptySong, loadSongFromFile, loadSongFromString } from './services/SongService.js';
+  import { playPattern, playSong, stopSong, playNote } from './services/RendererService.js';
   import { getCumlativeRowAtPosition } from './services/SequenceService.js';
+  import { adjustAttenuation, setNote } from './services/PatternService.js';
+  import { isInputElement } from './lib/utils.js';
+  import { NOTE_KEY_CODES, PATTERN_ROW_FINE_STEP, PATTERN_ROW_COARSE_STEP, ATTENUATION_FINE_STEP, ATTENUATION_COARSE_STEP} from './config.js';
 
   import SequenceEditor from './components/SequenceEditor.svelte';
 	import InstrumentEditor from './components/InstrumentEditor.svelte';
@@ -17,6 +20,7 @@
   import Button from './components/Button.svelte';
   import Slider from './components/Slider.svelte';
   import Pane from './components/Pane.svelte';
+  import Piano from './components/PianoInput.svelte';
   import KeyboardModal from './components/KeyboardModal.svelte';
   import AboutModal from './components/AboutModal.svelte';
 
@@ -81,7 +85,7 @@
   }
 
   const handleSaveSongClick = () => {
-    var element = document.createElement('a');
+    const element = document.createElement('a');
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(serializeSong()));
     element.setAttribute('download', `${$title}.js`);
     element.style.display = 'none';
@@ -100,11 +104,41 @@
 
   const handleKeyPress = event => {
     const {key, shiftKey, altKey} = event;
-    if (key === 'Enter') {
+
+    // If the active element is a form input (button, input etc.) do nothing
+    if (isInputElement(document.activeElement)) {
+      return;
+    }
+
+    if (key === 'ArrowLeft') {
+      $selectedChannel--;
+    } else if (key === 'ArrowRight') {
+      $selectedChannel++;
+    } else if (key === 'ArrowUp') {
+      if (altKey) {
+        const step = shiftKey ? ATTENUATION_COARSE_STEP : ATTENUATION_FINE_STEP;
+        adjustAttenuation($selectedPattern, $selectedChannel, $selectedRow, step);
+      } else {
+        const step = shiftKey ? PATTERN_ROW_COARSE_STEP : PATTERN_ROW_FINE_STEP;
+        $selectedRow = Math.max(0, $selectedRow - step);
+      }
+    } else if (key === 'ArrowDown') {
+      if (altKey) {
+        const step = shiftKey ? ATTENUATION_COARSE_STEP : ATTENUATION_FINE_STEP;
+        adjustAttenuation($selectedPattern, $selectedChannel, $selectedRow, -step)
+      } else {
+        const step = shiftKey ? PATTERN_ROW_COARSE_STEP : PATTERN_ROW_FINE_STEP;
+        $selectedRow = Math.min($patterns[$selectedPattern][0].length - 3, $selectedRow + step);
+      }
+    } else if (key === ' ') {
+      setNote($selectedPattern, $selectedChannel, $selectedRow, -1);
+    } else if (key === 'Backspace') {
+      event.preventDefault();
+      setNote($selectedPattern, $selectedChannel, $selectedRow, 0);
+    } else if (key === 'Enter') {
       if ($songPlaying) {
         stopSong();
       } else {
-
         if (altKey) {
           if (shiftKey) {
             resetSongPosition();
@@ -117,7 +151,13 @@
           playPattern($selectedPattern);
         }
       }
-      event.preventDefault()
+      event.preventDefault();
+    } else {
+      const note = NOTE_KEY_CODES[key];
+      if (note) {
+        setNote($selectedPattern, $selectedChannel, $selectedRow, note);
+        playNote($patterns[$selectedPattern][$selectedChannel][0] || 0, note);
+      }
     }
   }
 
@@ -162,21 +202,23 @@
 
   <SequenceEditor bind:selectedPosition={$selectedSequence} on:select={handlePositionSelect} on:input={handlePositionChange} />
 
-  <PatternEditor bind:selectedRow={$selectedRow} bind:selectedPattern={$selectedPattern} on:patternselect={handlePatternSelect} />
+  <PatternEditor bind:selectedChannel={$selectedChannel} bind:selectedRow={$selectedRow} bind:selectedPattern={$selectedPattern} on:patternselect={handlePatternSelect} />
 
   <InstrumentEditor />
+
+  <Piano />
 </main>
 
 <KeyboardModal bind:open={showHelpModal} />
 <AboutModal bind:open={showAboutModal} />
 
 <input type="file" hidden bind:this={fileElem} bind:files>
-<svelte:window on:keypress={handleKeyPress} />
+<svelte:window on:keydown={handleKeyPress} />
 
 <style>
   main {
     display: grid;
-    grid-template-rows:  auto auto 1fr auto;
+    grid-template-rows:  auto auto 1fr auto auto;
     height: 100vh;
     gap: var(--panel-spacing);
     padding: var(--panel-spacing);

@@ -20,3 +20,13 @@ export const round = (value, decimalPlaces = 2) => {
   const pow = Math.pow(10, decimalPlaces);
   return Math.round(value * pow) / pow;
 };
+
+
+/**
+ * Determines if a HMTLElement is an input element
+ *
+ * @param {HTMLElement} element - The element to test.
+ */
+export const isInputElement = element => {
+  return 'form' in element;
+};

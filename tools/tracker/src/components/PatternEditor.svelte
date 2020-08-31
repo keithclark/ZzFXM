@@ -116,27 +116,6 @@ const handleStopClick = () => {
   stopSong();
 }
 
-const handleKeyPress = event => {
-  const {key} = event;
-
-  // TODO: Find a better way to do this, relying on the existence of a class in
-  // a child component is fragile.
-  if (!document.activeElement.classList.contains('noteList')) {
-    return;
-  }
-
-  if (key === 'ArrowLeft') {
-    if (selectedChannel > 0) {
-      selectedChannel--;
-      channelElems[selectedChannel].querySelector('[tabindex]').focus();
-    }
-  } else if (key === 'ArrowRight') {
-    if (selectedChannel < channelCount - 1) {
-      selectedChannel++;
-      channelElems[selectedChannel].querySelector('[tabindex]').focus();
-    }
-  }
-}
 </script>
 
 
@@ -187,7 +166,7 @@ const handleKeyPress = event => {
     </div>
     <div class="channels outset">
       {#each $patterns[selectedPattern] as channel, i}
-        <div class="channel inset" bind:this={channelElems[i]} on:keydown={handleKeyPress} on:focusin={()=>selectedChannel = i} class:selected={i==selectedChannel}>
+        <div class="channel inset" bind:this={channelElems[i]} on:focusin={()=>selectedChannel = i} class:selected={i==selectedChannel}>
           <Channel on:rowselect title={`Track ${i}`} bind:selectedRow={selectedRow} data={channel}></Channel>
           <div class="level" style="transform:scaleY({$channelMeters[i] || 0})"></div>
         </div>
