@@ -143,7 +143,7 @@ const paste = () => {
         <NumberProperty size={4} label="Shape Curve" hint="Squarenes of wave (0=square, 1=normal, 2=pointy)" min="0" max="1000000000" step="0.1" on:input={handleChange} bind:value={instrument[7]} />
         <NumberProperty size={4} label="Slide" hint="How much to slide frequency (kHz/s)" min="-1000000000" max="1000000000" step="0.1" on:input={handleChange} bind:value={instrument[8]} />
         <NumberProperty size={4} label="Delta Slide" hint="How much to change slide (kHz/s/s)" min="-1000000000" max="1000000000" step="0.1" on:input={handleChange} bind:value={instrument[9]} />
-        <NumberProperty size={4} label="Pitch Jump" hint="Frequency of pitch jump (Hz)" min="-1000000000" max="1000000000" step="50" on:input={handleChange} bind:value={instrument[10]} />
+        <NumberProperty size={4} label="Pitch Jump" hint="Frequency of pitch jump (Hz)" min="-1000000000" max="1000000000" step="10" on:input={handleChange} bind:value={instrument[10]} />
         <NumberProperty size={4} label="Pitch Jump Time" hint="Time of pitch jump (seconds)" min="-1000000000" max="1000000000" step="0.01" on:input={handleChange} bind:value={instrument[11]} />
         <NumberProperty size={4} label="Repeat Time" hint="Resets some parameters periodically (seconds)" min="-1000000000" max="1000000000" step="0.01" on:input={handleChange} bind:value={instrument[12]} />
         <NumberProperty size={4} label="Noise" hint="How much random noise to add (percent)" min="-1000000000" max="1000000000" step="0.1" on:input={handleChange} bind:value={instrument[13]} />
