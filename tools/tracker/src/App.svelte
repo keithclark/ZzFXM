@@ -20,7 +20,6 @@
   import Button from './components/Button.svelte';
   import Slider from './components/Slider.svelte';
   import Pane from './components/Pane.svelte';
-  import Piano from './components/PianoInput.svelte';
   import KeyboardModal from './components/KeyboardModal.svelte';
   import AboutModal from './components/AboutModal.svelte';
 
@@ -206,7 +205,6 @@
 
   <InstrumentEditor />
 
-  <Piano />
 </main>
 
 <KeyboardModal bind:open={showHelpModal} />
@@ -218,7 +216,7 @@
 <style>
   main {
     display: grid;
-    grid-template-rows:  auto auto 1fr auto auto;
+    grid-template-rows: auto auto 1fr auto;
     height: 100vh;
     gap: var(--panel-spacing);
     padding: var(--panel-spacing);

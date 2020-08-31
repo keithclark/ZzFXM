@@ -11,22 +11,21 @@ import Field from './Field.svelte';
 import Button from './Button.svelte';
 import TextProperty from './TextProperty.svelte';
 import NumberProperty from './NumberProperty.svelte';
+import PianoInput from './PianoInput.svelte';
 
 export let selectedChannel = 0;
 export let selectedRow = 0;
 export let selectedPattern = 0;
 
+let showPiano = window.matchMedia('(min-height: 48em)').matches;
 let channelClipboard;
 let patternClipboard;
 
 $: patternCount = $patterns.length;
 $: channelCount = $patterns[selectedPattern].length;
-$: rowCount = $patterns[selectedPattern][0].length - 2;
 $: selectedPattern = clamp(selectedPattern, 0, $patterns.length - 1);
 $: selectedChannel = clamp(selectedChannel, 0, $patterns[selectedPattern].length - 1);
 $: selectedRow = clamp(selectedRow, 0, $patterns[selectedPattern][0].length - 3) | 0;
-$: selectedAttenuation = $patterns[selectedPattern][selectedChannel][selectedRow + 2] % 1;
-$: selectedNote = $patterns[selectedPattern][selectedChannel][selectedRow + 2] | 0;
 
 
 $: usage = $sequence.map((pattern, i) => {
@@ -116,6 +115,9 @@ const handleStopClick = () => {
   stopSong();
 }
 
+const handlePianoToggleClick = () => {
+  showPiano = !showPiano;
+}
 </script>
 
 
@@ -161,6 +163,9 @@ const handleStopClick = () => {
           <Button disabled={channelCount === 1} on:click={handleDeleteRowClick} label="Delete" />
           <Button label="Clear" on:click={handleClearRowClick} />
         </Field>
+        <Field label="Tools">
+          <Button on:click={handlePianoToggleClick} label="Toggle Piano" />
+        </Field>
         <div class="outset"></div>
       </Toolbar>
     </div>
@@ -172,6 +177,9 @@ const handleStopClick = () => {
         </div>
       {/each}
     </div>
+    {#if showPiano}
+      <PianoInput />
+    {/if}
   </Pane>
 </div>
 
