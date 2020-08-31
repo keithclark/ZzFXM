@@ -10,28 +10,38 @@
   export let size = 1;
   export let hint = '';
 
+  const fineStep = step;
+  const coarseStep = step * 10;
+
   let lastGoodValue = value;
   let elem;
 
-  const setValue = e => {
+  const setValue = () => {
     elem.value = value = lastGoodValue;
   }
 
-  const setValueIfValid = e => {
+  const setValueIfValid = event => {
     const newValue = parseFloat(elem.value);
-    if (validateValue(newValue)) {
-      lastGoodValue = value = newValue;
-    } else {
-      e.stopImmediatePropagation();
+    if ((newValue === 0 && elem.value.length > 1) || !validateValue(newValue)) {
+      event.stopImmediatePropagation();
+      return;
     }
+    lastGoodValue = value = newValue;
   }
 
   const validateValue = value => {
     return !isNaN(value) && value >= min && value <= max;
   }
 
+  const handleKeyDown = event => {
+    if (event.shiftKey) {
+      step = coarseStep;
+    } else {
+      step = fineStep;
+    }
+  }
 </script>
 
 <Property {label} {hint} let:id={id}>
-  <input {id} bind:this={elem} style="width: { size + 4 }ch" class="input" type="number" {step} {min} {max} value={value} on:focus={lastGoodValue=value} on:change={setValue} on:input={setValueIfValid} on:input on:change>
+  <input {id} bind:this={elem} style="width: { size + 4 }ch" class="input" type="number" {step} {min} {max} value={value} on:focus={lastGoodValue=value} on:keydown={handleKeyDown} on:change={setValue} on:input={setValueIfValid} on:input on:change>
 </Property>
