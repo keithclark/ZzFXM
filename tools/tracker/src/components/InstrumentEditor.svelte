@@ -121,7 +121,7 @@ const paste = () => {
           <Button label="Export" on:click={handleExportClick} />
           <Button label="Library" on:click={handleSelectClick} />
         </Field>
-        <Field label="Pattern Usage"><span class="usage input">{usage}</span></Field>
+        <Field label="Pattern Usage"><span class="usage input">{usage.length ? usage : 'Unused'}</span></Field>
         <div class="outset"></div>
       </Toolbar>
     </div>
@@ -152,6 +152,9 @@ const paste = () => {
         <NumberProperty size={4} label="Delay" hint="Overlap with itself for reverb and flanger effects (seconds)" min="0" max="1000000000" step="0.01" on:input={handleChange} bind:value={instrument[16]} />
         <NumberProperty size={4} label="Sustain Volume" hint="Volume level for sustain (percent)" min="0" max="1000000000" step="0.01" on:input={handleChange} bind:value={instrument[17]} />
         <NumberProperty size={4} label="Decay" hint="Decay time, how long to reach sustain after attack" min="0" max="1" step="0.01" on:input={handleChange} bind:value={instrument[18]} />
+        <NumberProperty size={4} label="Tremolo" hint="Trembling effect, rate controlled by repeat time (precent)" min="0" max="1" step="0.01" on:input={handleChange} bind:value={instrument[19]} />
+        <div class="outset"></div>
+        <div class="outset"></div>
       </div>
       <div class="instrument__preview outset">
         <SampleViewer data={buffer} />
