@@ -31,6 +31,7 @@ export let title = '';
   box-shadow: 0 2px 5px 2px #0008;
   display: grid;
   grid-template-rows: auto 1fr auto;
+  z-index:1
 }
 .modal__header, .modal__footer {
   padding: var(--panel-spacing);
