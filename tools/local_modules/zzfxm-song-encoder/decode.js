@@ -26,7 +26,7 @@ export const decodePatternParams = pattern => {
  */
 export const decodeInstrumentParams = instrument => {
   const params = instrument.slice();
-  params.length = 19;
+  params.length = 20;
 
   return [...params].map((param, index) => {
     if (index === 0 && param === undefined) {
