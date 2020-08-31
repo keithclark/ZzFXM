@@ -1,4 +1,5 @@
 import { patterns, patternsMeta } from '../stores.js';
+import { clamp, round } from '../lib/utils.js';
 
 // This is used to auto-name patterns
 let patternNo = 0;
@@ -169,6 +170,43 @@ export const createPattern = (tracks = 3, rows = 64) => {
 export const setPatternData = (pattern, data) => {
   patterns.update(patterns => {
     patterns[pattern] = data
+    return patterns;
+  });
+};
+
+
+/**
+ * Adjust the attentuation of a note.
+ *
+ * @param {number} pattern - Index of the pattern containing the value to update
+ * @param {number} channel - Index of the channel containing the value to update
+ * @param {number} row - Index of the row containing the value to update
+ * @param {number} step - Value to adjust attenutation by
+ */
+export const adjustAttenuation = (pattern, channel, row, step) => {
+  patterns.update(patterns => {
+    const channelRows = patterns[pattern][channel];
+    const note = channelRows[row + 2] | 0;
+    const attenuation = round(channelRows[row + 2] % 1, 2);
+    channelRows[row + 2] = note + clamp(attenuation + step, 0, .99);
+    return patterns;
+  });
+};
+
+
+/**
+ * Set a note
+ *
+ * @param {number} pattern - Index of the pattern containing the note to update
+ * @param {number} channel - Index of the channel containing the note to update
+ * @param {number} row - Index of the row containing the note to update
+ * @param {number} note - The new note
+ */
+export const setNote = (pattern, channel, row, note) => {
+  patterns.update(patterns => {
+    const channelRows = patterns[pattern][channel];
+    const currentAttenuation = round(channelRows[row + 2] % 1, 2);
+    channelRows[row + 2] = note + currentAttenuation;
     return patterns;
   });
 };
