@@ -102,7 +102,7 @@
   }
 
   const handleKeyPress = event => {
-    const {key, shiftKey, altKey} = event;
+    const { key, shiftKey, altKey, ctrlKey, metaKey } = event;
 
     // If the active element is a form input (button, input etc.) do nothing
     if (isInputElement(document.activeElement)) {
@@ -151,7 +151,7 @@
         }
       }
       event.preventDefault();
-    } else {
+    } else if (!shiftKey && !altKey && !metaKey && !ctrlKey) {
       const note = NOTE_KEY_CODES[key];
       if (note) {
         setNote($selectedPattern, $selectedChannel, $selectedRow, note);
