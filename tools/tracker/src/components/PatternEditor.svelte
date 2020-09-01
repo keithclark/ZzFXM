@@ -1,5 +1,5 @@
 <script>
-import { patterns, sequence, channelMeters, patternsMeta } from '../stores.js';
+import { patterns, sequence, channelMeters, patternsMeta, songPlaying } from '../stores.js';
 import { addPattern, deletePattern, addChannel, deleteChannel, addRow, deleteRow, createTrack, createPattern, clearRow, setPatternData } from '../services/PatternService.js';
 import { playPattern, stopSong } from '../services/RendererService.js';
 import { createEventDispatcher } from 'svelte';
@@ -16,8 +16,8 @@ import PianoInput from './PianoInput.svelte';
 export let selectedChannel = 0;
 export let selectedRow = 0;
 export let selectedPattern = 0;
+export let piano = false;
 
-let showPiano = window.matchMedia('(min-height: 48em)').matches;
 let channelClipboard;
 let patternClipboard;
 
@@ -116,7 +116,7 @@ const handleStopClick = () => {
 }
 
 const handlePianoToggleClick = () => {
-  showPiano = !showPiano;
+  piano = !piano;
 }
 </script>
 
@@ -146,8 +146,8 @@ const handlePianoToggleClick = () => {
         <NumberProperty label="#" max={patternCount} bind:value={selectedPattern} on:input={handlePatternChange}></NumberProperty>
         <TextProperty label="Name" bind:value={$patternsMeta[selectedPattern]}></TextProperty>
         <Field label="Playback">
-          <Button keyboard="ENTER" label="Play Pattern" on:click={handlePlayClick} />
-          <Button keyboard="ENTER" label="Stop" on:click={handleStopClick} />
+          <Button disabled={$songPlaying}  keyboard="ENTER" label="Play Pattern" on:click={handlePlayClick} />
+          <Button disabled={!$songPlaying}  keyboard="ENTER" label="Stop" on:click={handleStopClick} />
         </Field>
         <Field label="Track">
           <Button on:click={handleAddChannelClick} label="Add" />
@@ -163,9 +163,6 @@ const handlePianoToggleClick = () => {
           <Button disabled={channelCount === 1} on:click={handleDeleteRowClick} label="Delete" />
           <Button label="Clear" on:click={handleClearRowClick} />
         </Field>
-        <Field label="Tools">
-          <Button on:click={handlePianoToggleClick} label="Toggle Piano" />
-        </Field>
         <div class="outset"></div>
       </Toolbar>
     </div>
@@ -177,7 +174,7 @@ const handlePianoToggleClick = () => {
         </div>
       {/each}
     </div>
-    {#if showPiano}
+    {#if piano}
       <PianoInput />
     {/if}
   </Pane>
@@ -211,7 +208,7 @@ const handlePianoToggleClick = () => {
     bottom: 50%;
     left: calc(50% - 16px);
     height: 150px;
-    box-shadow: inset 0 0 1px #0004;
     transform-origin: 50% 100%;
+    will-change: transform;
   }
 </style>

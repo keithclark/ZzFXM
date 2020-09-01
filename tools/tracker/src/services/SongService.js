@@ -97,7 +97,7 @@ export const loadSongFromFile = file => {
   return fetch(url)
     .then(res => res.text())
     .then(loadSongFromString)
-    .catch(err => new Error('Invalid file format'))
+    .catch(err => err)
     .then(res => {
       URL.revokeObjectURL(url);
       if (res instanceof Error) {
