@@ -1,6 +1,5 @@
 <script>
 
-	import demoSong from './demo.js';
   import { patterns, sequence, speed, title, selectedRow, selectedChannel, selectedPattern, selectedSequence, masterVolume, currentPlaybackPosition, songPlaying } from './stores.js';
   import { serializeSong, createEmptySong, loadSongFromFile, loadSongFromString } from './services/SongService.js';
   import { playPattern, playSong, stopSong, playNote } from './services/RendererService.js';
@@ -22,12 +21,16 @@
   import Pane from './components/Pane.svelte';
   import KeyboardModal from './components/KeyboardModal.svelte';
   import AboutModal from './components/AboutModal.svelte';
-
+  import SourceModal from './components/SourceModal.svelte';
+  import demoSong from './demo.js';
 
   let files;
   let fileElem;
-  let showHelpModal = false;
+  let showKeysHelpModal = false;
   let showAboutModal = false;
+  let showSourceModal = false;
+  let showPaino = window.matchMedia('(min-height: 48em)').matches;
+  let showInstruments = true;
 
   $: if (files) {
     stopSong();
@@ -56,7 +59,7 @@
   }
 
   const handlePatternSelect = () => {
-    stopSong()
+    stopSong();
     currentPlaybackPosition.set(-1);
     selectedSequence.set(null);
   }
@@ -94,7 +97,7 @@
   }
 
   const handleHelpClick = () => {
-    showHelpModal = true;
+    showKeysHelpModal = true;
   }
 
   const handleAboutClick = () => {
@@ -166,10 +169,25 @@
     resetSongPosition();
   }
 
-  // Start with an empty song
-  loadSongFromString(demoSong);
-  //createEmptySong();
+  const handleSourceClick = () => {
+    showSourceModal = true;
+  }
 
+  const handlePianoToggleClick = () => {
+    showPaino = !showPaino;
+  }
+
+  const handleInstrumentsToggleClick = () => {
+    showInstruments = !showInstruments;
+  }
+
+  const handleLoadDemoClick = () => {
+    stopSong();
+    loadSongFromString(demoSong);
+    resetSongPosition();
+  }
+
+  createEmptySong();
 </script>
 
 <main>
@@ -179,21 +197,28 @@
         <TextProperty label="Title" bind:value={$title} />
         <NumberProperty label="Speed" bind:value={$speed} size={3} min={1} max={320} />
         <Field label="Playback">
-          <Button keyboard="ALT + ENTER" label="Play Song" on:click={handlePlaySongClick} />
-          <Button keyboard="ENTER" label="Stop" on:click={handleStopClick} />
+          <Button disabled={$songPlaying} keyboard="ALT + ENTER" label="Play Song" on:click={handlePlaySongClick} />
+          <Button disabled={!$songPlaying} keyboard="ENTER" label="Stop" on:click={handleStopClick} />
         </Field>
         <Field label="File">
           <Button label="New" on:click={handleNewSongClick} />
           <Button label="Load" on:click={handleLoadSongClick} />
           <Button label="Save" on:click={handleSaveSongClick} />
+          <Button label="Source" on:click={handleSourceClick} />
+          <Button label="Load Demo" on:click={handleLoadDemoClick} />
+        </Field>
+        <Field label="Toggle Tools">
+          <Button on:click={handlePianoToggleClick} label="Piano" />
+          <Button on:click={handleInstrumentsToggleClick} label="Instruments" />
         </Field>
         <Property label="Master Volume" let:id>
           <Slider {id} min={0} max={1} step={.1} bind:value={$masterVolume} />
         </Property>
-        <Field label="Info">
+        <Field label="Help">
           <Button label="About" on:click={handleAboutClick} />
-          <Button label="Help" on:click={handleHelpClick} />
+          <Button label="Keys" on:click={handleHelpClick} />
         </Field>
+
         <div class="outset"></div>
       </Toolbar>
     </div>
@@ -201,14 +226,17 @@
 
   <SequenceEditor bind:selectedPosition={$selectedSequence} on:select={handlePositionSelect} on:input={handlePositionChange} />
 
-  <PatternEditor bind:selectedChannel={$selectedChannel} bind:selectedRow={$selectedRow} bind:selectedPattern={$selectedPattern} on:patternselect={handlePatternSelect} />
+  <PatternEditor piano={showPaino} bind:selectedChannel={$selectedChannel} bind:selectedRow={$selectedRow} bind:selectedPattern={$selectedPattern} on:patternselect={handlePatternSelect} />
 
-  <InstrumentEditor />
+  {#if showInstruments}
+    <InstrumentEditor />
+  {/if}
 
 </main>
 
-<KeyboardModal bind:open={showHelpModal} />
+<KeyboardModal bind:open={showKeysHelpModal} />
 <AboutModal bind:open={showAboutModal} />
+<SourceModal bind:open={showSourceModal} />
 
 <input type="file" hidden bind:this={fileElem} bind:files>
 <svelte:window on:keydown={handleKeyPress} />
@@ -216,7 +244,7 @@
 <style>
   main {
     display: grid;
-    grid-template-rows: auto auto 1fr auto;
+    grid-template-rows: auto auto 1fr;
     height: 100vh;
     gap: var(--panel-spacing);
     padding: var(--panel-spacing);
