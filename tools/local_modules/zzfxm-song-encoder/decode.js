@@ -1,3 +1,6 @@
+import { validateSong } from './validate.js';
+
+
 const jsonSafe = str => {
   return str.replace(/\[,/g,'[null,')
     .replace(/,,\]/g,',null]') // remove `undefined` work around
@@ -71,10 +74,21 @@ export const decodeInstrument = instrument => {
  */
 export const decodeSong = song => {
   const jsonSong = jsonSafe(song.replace(/^export\s+default\s+/,''));
+  let data;
+  let valid;
+  try {
+    data = JSON.parse(jsonSong, (key, value) => {
+      return value === null ? undefined : value;
+    });
+  } catch (e) {
+    throw new Error('Invalid song structure');
+  }
 
-  const data = JSON.parse(jsonSong, (key, value) => {
-    return value === null ? undefined : value;
-  });
+  valid = validateSong(data);
+
+  if (valid instanceof Error) {
+    throw valid;
+  }
 
   data[0] = data[0].map(decodeInstrumentParams);
   data[1] = data[1].map(decodePatternParams);
