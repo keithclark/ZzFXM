@@ -53,6 +53,12 @@ export default [{
 	watch: {
 		clearScreen: false
 	}
+},
+{
+	input: '../../zzfx.js',
+	output: {
+		file: 'public/zzfx.js'
+	}
 }];
 
 function serve() {
