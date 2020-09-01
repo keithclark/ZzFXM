@@ -181,5 +181,7 @@ const paste = () => {
 
 .usage {
   min-width: 8em;
+  max-width: 17em;
+  overflow: auto;
 }
 </style>
