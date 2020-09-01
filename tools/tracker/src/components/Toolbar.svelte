@@ -5,7 +5,6 @@
 <style>
   .toolbar {
     display: flex;
-    flex:1
   }
   .toolbar :global(.field) {
     flex-direction: column;
