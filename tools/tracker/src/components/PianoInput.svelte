@@ -15,7 +15,7 @@ const handleClick = event => {
 };
 </script>
 
-<div class="inset">
+<div>
   {#each keys as key}
     <span tabindex="0" data-note={key} on:mousedown={handleClick}>
       {key.toUpperCase()}
@@ -27,7 +27,7 @@ const handleClick = event => {
   div {
     display: flex;
     align-items: flex-start;
-    padding: var(--field-padding);
+    padding: var(--modal-spacing);
   }
   span {
     padding-top: 76px;
