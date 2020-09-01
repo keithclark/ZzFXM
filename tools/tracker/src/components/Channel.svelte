@@ -86,6 +86,7 @@ const handleScroll = event => {
   background-image: linear-gradient( #0001 18px, transparent 18px);
   background-size:100% 72px;
   white-space: pre-line;
+  will-change: transform;
 }
 .channel :global(.field) {
   align-items: center!important;
