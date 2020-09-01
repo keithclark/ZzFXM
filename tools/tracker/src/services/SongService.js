@@ -26,9 +26,10 @@ export const createEmptySong = () => {
     ],
     [
       [
-        createTrack(64),
-        createTrack(64),
-        createTrack(64)
+        createTrack(64, 0, -1),
+        createTrack(64, 0, 1),
+        createTrack(64, 0, -1),
+        createTrack(64, 0, 1)
       ]
     ],
     [0],
