@@ -118,5 +118,6 @@ const color = seq => `hsl(${90+seq*20},35%,50%)`;
     bottom:0;
     margin-left:-1px;
     background:#f008;
+    will-change: transform;
   }
 </style>
