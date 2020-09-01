@@ -1,7 +1,6 @@
 <script>
 import { sequence, patterns, patternsMeta, currentPlaybackPosition } from '../stores.js';
 import { createEventDispatcher } from 'svelte';
-import { getCumlativeRowAtPosition} from '../services/SequenceService.js'
 import Field from './Field.svelte';
 import Button from './Button.svelte';
 import Toolbar from './Toolbar.svelte';
@@ -49,8 +48,6 @@ const moveRight = () => {
 
 $: hasSelection = selectedPosition !== null;
 
-//$: currentPlaybackPosition.set(getCumlativeRowAtPosition(selectedPosition));
-
 const color = seq => `hsl(${90+seq*20},35%,50%)`;
 
 </script>
@@ -93,7 +90,12 @@ const color = seq => `hsl(${90+seq*20},35%,50%)`;
 <style>
   .sequence {
     overflow: auto;
-    width: 100%;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .sequence::-webkit-scrollbar {
+    height: 0px;
+    background: transparent;
   }
   .sequence__patterns {
     display: flex;
