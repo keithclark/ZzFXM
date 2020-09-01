@@ -1,44 +1,56 @@
 <script>
-import { onMount } from "svelte";
+import { onDestroy, onMount } from "svelte";
 
 let canvas;
+let debounce = false;
+let canvasWidth;
+let canvasHeight;
 
 export let data;
 
-$: data,generateSampleView();
-
-const resize = () => {
-  canvas.height = 0;
-  canvas.width = 0;
-  requestAnimationFrame(() => {
-    canvas.width = canvas.parentElement.clientWidth;
-    canvas.height = canvas.parentElement.clientHeight;
-    generateSampleView();
-  });
+$: if (data){
+  generateSampleView();
 }
+
+
+const resizeObserver = new ResizeObserver(entries => {
+  for (const entry of entries) {
+    const {width, height} = entry.contentRect;
+    canvasWidth = width;
+    canvasHeight = height;
+
+    if (!debounce) {
+      debounce = true;
+      generateSampleView();
+      setTimeout(() => {
+        generateSampleView();
+        debounce = false;
+      }, 500);
+    }
+  }
+});
+
 
 const generateSampleView = () => {
   if (!canvas) {
-    return;
+    return
   }
   const context = canvas.getContext('2d');
-  const width = canvas.clientWidth;
-  const height = canvas.clientHeight;
-
+  canvas.height = canvasHeight;
+  canvas.width = canvasWidth;
   context.strokeStyle = '#0004';
-  context.clearRect(0, 0, width, height);
   context.beginPath();
 
-  context.moveTo(0, height / 2 - .5);
-  context.lineTo(width, height / 2 -.5);
+  context.moveTo(0, canvasHeight / 2 - .5);
+  context.lineTo(canvasWidth, canvasHeight / 2 -.5);
   context.stroke();
   context.closePath();
 
-  context.strokeStyle = '#070';
+  context.strokeStyle = '#062';
   context.beginPath();
-  for (let c = 0; c < width; c += 2) {
-    const p = c * (data.length / width) | 0;
-    const y = (.5 + data[p]) * height | 0;
+  for (let c = 0; c < canvasWidth; c += 2) {
+    const p = c * (data.length / canvasWidth) | 0;
+    const y = (.5 + data[p]) * canvasHeight | 0;
     if (c === 0) {
       context.moveTo(0, y);
     } else {
@@ -49,8 +61,32 @@ const generateSampleView = () => {
   context.closePath();
 }
 
-onMount(resize);
+onMount(() => {
+  resizeObserver.observe(canvas.parentElement);
+});
+
+onDestroy(() => {
+  resizeObserver.unobserve(canvas.parentElement);
+});
+
 </script>
 
-<canvas bind:this={canvas}></canvas>
-<svelte:window on:resize={resize} />
+<div>
+  <canvas class="inset" bind:this={canvas}></canvas>
+</div>
+
+<style>
+  div {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+  canvas {
+    position:absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: var(--field-padding) solid var(--outset-color)
+  }
+</style>
