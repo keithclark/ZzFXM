@@ -8,7 +8,7 @@
 </script>
 
 <div class="field outset" title={hint}>
-  <label for={id} class="field__label">{ label }</label>
+  <label for={id} class="field__label embossed">{ label }</label>
   <span class="field__controls inset">
     <slot {id} />
   </span>
@@ -22,8 +22,6 @@
   }
   .field__label {
     flex: 1;
-    color: #000a;
-    text-shadow: 1px 1px 0 #fff6;
     text-indent: 2px;
   }
   .field__controls {

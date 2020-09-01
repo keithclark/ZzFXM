@@ -1,6 +1,13 @@
 :root {
+  --body-color: #b4b4b4;
   --inset-color: #999;
   --outset-color: #aaa;
+  --bevel-tl-color: #fff6;
+  --bevel-br-color: #0004;
+  --embossed-tl-color: #000a;
+  --embossed-br-color: #fff8;
+  --input-bg-color: #999c90;
+  --input-fg-color: #232;
   --toolbar-color: #c2c2c2;
   --button-color: #7897b7;
   --button-color-hover: #68829c;
@@ -24,9 +31,10 @@ html, body {
 
 body {
   font: 82%/1.5 'Share Tech Mono', monospace;
-  background: #b4b4b4;
+  background: var(--body-color);
   letter-spacing: -0.05em;
   overscroll-behavior: none;
+  user-select: none;
 }
 
 .input {
@@ -58,26 +66,27 @@ option:checked {
 
 .input[type="text"],
 .input[type="number"],
+textarea.input,
 .select {
   border-radius: 0;
-  background:#999c90;
-  color:#232;
-  box-shadow: inset -.5px -.5px 1px #0004;
+  background: var(--input-bg-color);
+  color: var(--input-fg-color);
+  box-shadow: inset -1px -1.5px 1px var(--bevel-br-color);
 }
 
 .embossed {
-  color:#000a;
-  text-shadow: 1px 1px 0 #fff6;
+  color:var(--embossed-tl-color);
+  text-shadow: 1px 1px 0 var(--embossed-br-color);
 }
 
 .inset {
-  box-shadow: inset -1px -1px 0 #fff8, inset 1px 1px 0 #0003;
+  box-shadow: inset -1px -1px 0 var(--bevel-tl-color), inset 1px 1px 0 var(--bevel-br-color);
   padding:1px;
   background-color: var(--inset-color);
 }
 
 .outset {
-  box-shadow: inset -1px -1px 0 #0004, inset 1px 1px 0 #fff6;
+  box-shadow: inset -1px -1px 0 var(--bevel-br-color), inset 1px 1px 0  var(--bevel-tl-color);
   padding:1px;
   background-color: var(--outset-color)
 }
