@@ -1,6 +1,6 @@
 <script>
-  import Modal from './Modal.svelte';
-  import { PATTERN_ROW_COARSE_STEP } from '../config.js';
+  import Modal from '../Modal.svelte';
+  import { PATTERN_ROW_COARSE_STEP } from '../../config.js';
 
   export let open = false;
 

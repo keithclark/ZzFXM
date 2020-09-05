@@ -1,6 +1,6 @@
 <script>
-  import Modal from './Modal.svelte';
-  import { version, repository } from '../../package.json';
+  import Modal from '../Modal.svelte';
+  import { version, repository } from '../../../package.json';
   export let open = false;
 </script>
 

@@ -19,9 +19,10 @@
   import Button from './components/Button.svelte';
   import Slider from './components/Slider.svelte';
   import Pane from './components/Pane.svelte';
-  import KeyboardModal from './components/KeyboardModal.svelte';
-  import AboutModal from './components/AboutModal.svelte';
-  import SourceModal from './components/SourceModal.svelte';
+  import KeyboardModal from './components/modals/KeyboardModal.svelte';
+  import AboutModal from './components/modals/AboutModal.svelte';
+  import SourceModal from './components/modals/SourceModal.svelte';
+  import SettingsModal from './components/modals/SettingsModal.svelte';
   import demoSong from './demo.js';
 
   let files;
@@ -29,6 +30,7 @@
   let showKeysHelpModal = false;
   let showAboutModal = false;
   let showSourceModal = false;
+  let showSettingsModal = false;
   let showPaino = window.matchMedia('(min-height: 48em)').matches;
   let showInstruments = true;
 
@@ -181,13 +183,21 @@
     showInstruments = !showInstruments;
   }
 
+  const handleSettingsClick = () => {
+    showSettingsModal = !showSettingsModal;
+  }
+
   const handleLoadDemoClick = () => {
     stopSong();
     loadSongFromString(demoSong);
     resetSongPosition();
   }
 
-  createEmptySong();
+  if (new URLSearchParams(location.search).has('demo')) {
+    loadSongFromString(demoSong);
+  } else {
+    createEmptySong();
+  }
 </script>
 
 <main>
@@ -215,6 +225,7 @@
           <Slider {id} min={0} max={1} step={.1} bind:value={$masterVolume} />
         </Property>
         <Field label="Help">
+          <Button label="Settings" on:click={handleSettingsClick} />
           <Button label="About" on:click={handleAboutClick} />
           <Button label="Keys" on:click={handleHelpClick} />
         </Field>
@@ -237,6 +248,7 @@
 <KeyboardModal bind:open={showKeysHelpModal} />
 <AboutModal bind:open={showAboutModal} />
 <SourceModal bind:open={showSourceModal} />
+<SettingsModal bind:open={showSettingsModal} />
 
 <input type="file" hidden bind:this={fileElem} bind:files>
 <svelte:window on:keydown={handleKeyPress} />
