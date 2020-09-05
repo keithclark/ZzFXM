@@ -1,3 +1,9 @@
+import {
+    DEFAULT_PLAYER_BUFFER_SIZE,
+    DEFAULT_PLAYER_SAMPLE_RATE,
+    DEFAULT_UI_FPS
+} from './config.js';
+
 import { writable } from 'svelte/store';
 
 
@@ -25,3 +31,8 @@ export const currentPlaybackLength = new writable(0);
 export const channelMeters = new writable([]);
 export const songPlaying = new writable(false);
 
+
+// Settings
+export const sampleRate = new writable(DEFAULT_PLAYER_SAMPLE_RATE);
+export const bufferSize = new writable(DEFAULT_PLAYER_BUFFER_SIZE);
+export const uiFPS = new writable(DEFAULT_UI_FPS);

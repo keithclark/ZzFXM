@@ -18,3 +18,27 @@ export const NOTE_KEY_CODES = {
   '6': 26, 'y': 27, '7': 28, 'u': 29, 'i': 30, '9': 31, 'o': 32, '0': 33,
   'p': 34, '[': 35, '=': 36
 };
+
+// UI update speed options - shown in the settings modal
+export const UI_FPS_OPTIONS = [
+  60, 30, 15, 10, 5
+];
+
+// Sample rate options - shown in the settings modal
+export const PLAYER_SAMPLE_RATE_OPTIONS = [
+  44100, 22050, 11025
+];
+
+// Song player buffer size options
+export const PLAYER_BUFFER_SIZE_OPTIONS = [
+  16384, 8192, 4096, 2048, 1024
+];
+
+// The default sample rate for the song player
+export const DEFAULT_PLAYER_SAMPLE_RATE = PLAYER_SAMPLE_RATE_OPTIONS[0];
+
+// The default buffer size for the song player
+export const DEFAULT_PLAYER_BUFFER_SIZE = PLAYER_BUFFER_SIZE_OPTIONS[2];
+
+// The default UI refresh rate
+export const DEFAULT_UI_FPS = UI_FPS_OPTIONS[0];

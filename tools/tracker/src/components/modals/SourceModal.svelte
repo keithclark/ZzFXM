@@ -1,7 +1,7 @@
 <script>
-  import Modal from './Modal.svelte';
-  import Button from './Button.svelte';
-  import { serializeSong, loadSongFromString } from '../services/SongService.js';
+  import Modal from '../Modal.svelte';
+  import Button from '../Button.svelte';
+  import { serializeSong, loadSongFromString } from '../../services/SongService.js';
   export let open = false;
 
   let src;
