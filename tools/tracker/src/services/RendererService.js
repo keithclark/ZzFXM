@@ -191,19 +191,22 @@ const next = () => {
  * @returns {<number>} The peak value for the channel
  */
 const mixChannelSampleData = (channel, start, length, leftChannelData, rightChannelData) => {
-  const step = zzfxR / zzfxX.sampleRate;
-  const {panning, attenuation, sample} = channel;
   let peak = 0;
 
-  for (let i = start; i < start + length; i++) {
-    if (channel.offset >= sample.length) {
-      break;
+  if (channel) {
+    const step = zzfxR / zzfxX.sampleRate;
+    const {panning, attenuation, sample} = channel;  
+
+    for (let i = start; i < start + length; i++) {
+      if (channel.offset >= sample.length) {
+        break;
+      }
+      const data = (1 - attenuation) * sample[channel.offset | 0] || 0;
+      leftChannelData[i] += -data * panning + data;
+      rightChannelData[i] += data * panning + data;
+      peak = Math.min(1, Math.max(Math.abs(data), peak));
+      channel.offset += step;
     }
-    const data = (1 - attenuation) * sample[channel.offset | 0] || 0;
-    leftChannelData[i] += -data * panning + data;
-    rightChannelData[i] += data * panning + data;
-    peak = Math.min(1, Math.max(Math.abs(data), peak));
-    channel.offset += step;
   }
   return peak;
 };
