@@ -20,40 +20,26 @@
   --field-padding: 3px;
 }
 
-/* dark mode
-:root {
-  --body-color: #4b555b;
-  --inset-color: #2d373c;
-  --outset-color: #455158;
-  --bevel-tl-color: #fff3;
-  --bevel-br-color: #0008;
-  --embossed-tl-color: #000;
-  --embossed-br-color: #fff2;
-  --toolbar-color: #55616a;
-  --button-color: #864741;
-  --button-color-hover: #68829c;
-  --button-color-press: #566472;
-  --focus-ring-color: #000;
-  --active-selection-color: #576065;
-  --input-bg-color: #22272f;
-  --input-fg-color: #8a8e66;
-}
-*/
 * {
   box-sizing: border-box;
 }
 
 html, body {
   margin:0;
-  padding:0
+  padding:0;
+  width: 100vw;
+  height: 100vh;
 }
-
+html {
+  overflow: hidden;
+}
 body {
   font: 82%/1.5 'Share Tech Mono', monospace;
   background: var(--body-color);
   letter-spacing: -0.05em;
   overscroll-behavior: none;
   user-select: none;
+  overflow: auto;
 }
 
 .input {
@@ -108,10 +94,6 @@ textarea.input,
   box-shadow: inset -1px -1px 0 var(--bevel-br-color), inset 1px 1px 0  var(--bevel-tl-color);
   padding:1px;
   background-color: var(--outset-color)
-}
-
-.filler {
-  flex: 1;
 }
 
 .splitView {
