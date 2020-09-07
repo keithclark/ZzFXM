@@ -17,6 +17,7 @@
   import Toolbar from './components/Toolbar.svelte';
   import Field from './components/Field.svelte';
   import Button from './components/Button.svelte';
+  import ToggleButton from './components/ToggleButton.svelte';
   import Slider from './components/Slider.svelte';
   import Pane from './components/Pane.svelte';
   import KeyboardModal from './components/modals/KeyboardModal.svelte';
@@ -218,8 +219,8 @@
           <Button label="Load Demo" on:click={handleLoadDemoClick} />
         </Field>
         <Field label="Toggle Tools">
-          <Button on:click={handlePianoToggleClick} label="Piano" />
-          <Button on:click={handleInstrumentsToggleClick} label="Instruments" />
+          <ToggleButton checked={showPaino} on:click={handlePianoToggleClick} label="Piano" />
+          <ToggleButton checked={showInstruments} on:click={handleInstrumentsToggleClick} label="Instruments" />
         </Field>
         <Property label="Master Volume" let:id>
           <Slider {id} min={0} max={1} step={.1} bind:value={$masterVolume} />
