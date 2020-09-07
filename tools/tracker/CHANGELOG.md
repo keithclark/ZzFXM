@@ -1,3 +1,8 @@
+v1.0.2b (7th Sept. 2020)
+
+* Added mute controls so tracks can be disabled while working on a pattern
+* Fixed issue with patterns not scrolling on touch devices
+
 v1.0.1b (5th Sept. 2020)
 
 * Allow UI to update independently from the audio buffer. UI can now run at 60FPS
