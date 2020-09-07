@@ -32,8 +32,8 @@
   let showAboutModal = false;
   let showSourceModal = false;
   let showSettingsModal = false;
-  let showPaino = window.matchMedia('(min-height: 48em)').matches;
-  let showInstruments = true;
+  let showPaino = window.matchMedia('(min-height: 500px)').matches;
+  let showInstruments = window.matchMedia('(min-height: 800px)').matches;
 
   $: if (files) {
     stopSong();
