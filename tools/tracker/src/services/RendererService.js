@@ -1,4 +1,4 @@
-import { uiFPS, bufferSize, sampleRate, patterns, instruments, sequence, speed, selectedRow, selectedPattern, selectedSequence, channelMeters, masterVolume, currentPlaybackLength, songPlaying } from '../stores.js'
+import { patternMuteStates, uiFPS, bufferSize, sampleRate, patterns, instruments, sequence, speed, selectedRow, selectedPattern, selectedSequence, channelMeters, masterVolume, currentPlaybackLength, songPlaying } from '../stores.js'
 import { getCumlativeRowAtPosition, getSongLength } from './SequenceService.js';
 import { get } from 'svelte/store';
 
@@ -33,6 +33,7 @@ let activeSoundCount = 0;
 let currentBufferSize;
 let isPlaying = false;
 let frames = [];
+let mutedTracks;
 
 
 // Create a gain node for the player volume. This is hooked up to a Svelte store
@@ -195,7 +196,7 @@ const mixChannelSampleData = (channel, start, length, leftChannelData, rightChan
 
   if (channel) {
     const step = zzfxR / zzfxX.sampleRate;
-    const {panning, attenuation, sample} = channel;  
+    const {panning, attenuation, sample} = channel;
 
     for (let i = start; i < start + length; i++) {
       if (channel.offset >= sample.length) {
@@ -293,11 +294,13 @@ const audioCallback = event => {
     }
 
     // Mix the channel samples into the stereo output buffers
-    const peakLevels = channels.map(channel => {
-      return mixChannelSampleData(channel, offset, beatDuration, dataL, dataR);
+    const peakLevels = channels.map((channel, channelIndex) => {
+      if (!mutedTracks[currentSongPosition.pattern][channelIndex]) {
+        return mixChannelSampleData(channel, offset, beatDuration, dataL, dataR);
+      }
     });
 
-    // If have a full frame of data, push state data for the UI scheduler to
+    // If we have a full frame of data, push state data for the UI scheduler to
     // consume later. If we only push a partial frame the UI will render state
     // incorrectly, causing flicker with peak meters.
     if (offset === 0 || beatDuration >= frameSize) {
@@ -464,6 +467,6 @@ bufferSize.subscribe(value => {
   }
 });
 
-uiFPS.subscribe(value => {
-  targetUpdateFps = value;
-});
+uiFPS.subscribe(value => targetUpdateFps = value);
+
+patternMuteStates.subscribe(value => mutedTracks = value);

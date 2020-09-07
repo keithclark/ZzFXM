@@ -1,4 +1,4 @@
-import { patterns, patternsMeta } from '../stores.js';
+import { patterns, patternsMeta, patternMuteStates } from '../stores.js';
 import { clamp, round } from '../lib/utils.js';
 
 // This is used to auto-name patterns
@@ -24,6 +24,10 @@ export const addPattern = (pattern, name = `Pattern ${patternNo}`) => {
     meta.push(name);
     return meta;
   });
+  patternMuteStates.update(states => {
+    states.push(new Array(pattern.length).fill(false));
+    return states;
+  });
   patternNo++;
   return newIndex;
 };
@@ -43,6 +47,10 @@ export const deletePattern = index => {
     meta.splice(index, 1)
     return meta;
   });
+  patternMuteStates.update(states => {
+    states.splice(index, 1);
+    return states;
+  });
 };
 
 
@@ -54,6 +62,7 @@ export const clearPatterns = () => {
   patternNo = 0;
   patterns.set([]);
   patternsMeta.set([]);
+  patternMuteStates.set([]);
 };
 
 
@@ -73,6 +82,10 @@ export const addChannel = (pattern, instrument = 0, panning = 0) => {
     patterns[pattern].push(createTrack(rowCount, instrument, panning));
     return patterns;
   });
+  patternMuteStates.update(states => {
+    states[pattern].push(false);
+    return states;
+  });
   return newIndex;
 };
 
@@ -87,6 +100,10 @@ export const deleteChannel = (pattern, channel) => {
   patterns.update(patterns => {
     patterns[pattern].splice(channel, 1);
     return patterns;
+  });
+  patternMuteStates.update(states => {
+    states[pattern].splice(channel, 1);
+    return states;
   });
 };
 
