@@ -23,6 +23,7 @@
   .field__label {
     flex: 1;
     text-indent: 2px;
+    white-space: nowrap;
   }
   .field__controls {
     display: inline-flex;
