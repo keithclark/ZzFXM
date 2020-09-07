@@ -13,6 +13,8 @@ export let mute = false;
 $: scrollPos = `${-selectedRow * 18}px`;
 $: totalRows = data.length - 3;
 
+let scrollSpeed = 0;
+
 const NOTE_NAMES = [
   'REL', '---',
   'C-1', 'C#1', 'D-1', 'D#1', 'E-1', 'F-1',
@@ -31,6 +33,46 @@ const handleScroll = event => {
   }
 }
 
+const decelerate = () => {
+  if (Math.abs(scrollSpeed)>.2) {
+    requestAnimationFrame(decelerate);
+    selectedRow += scrollSpeed / 4 | 0;
+    scrollSpeed *= .85;
+  } else {
+    scrollSpeed = 0;
+  }
+}
+
+const handleTouchStart = event => {
+  if (event.targetTouches.length > 1) {
+    return;
+  }
+  const startPos = event.targetTouches[0].screenY;
+  const startRow = selectedRow;
+  let prevPos = startPos;
+  scrollSpeed = 0;
+
+  const moveHandler = event => {
+    const pos = event.targetTouches[0].screenY;
+    const step = (pos - startPos) / 18 | 0;
+    scrollSpeed = prevPos - pos;
+    selectedRow = clamp(startRow - step, 0, totalRows);
+    prevPos = pos;
+  }
+
+  const endHandler = event => {
+    if (Math.abs(prevPos - startPos) < 5) {
+      event.target.focus();
+    } else if (Math.abs(scrollSpeed) > .1) {
+      decelerate();
+    }
+    window.removeEventListener('touchmove', moveHandler);
+    window.removeEventListener('touchend', endHandler);
+  }
+
+  window.addEventListener('touchmove',moveHandler )
+  window.addEventListener('touchend',endHandler )
+}
 </script>
 
 <div class:mute class="channel">
@@ -44,7 +86,7 @@ const handleScroll = event => {
     </Field>
   </Toolbar>
 
-  <div class="noteList" tabindex="0" on:wheel={handleScroll}>
+  <div class="noteList" tabindex="0" on:wheel={handleScroll} on:touchstart|preventDefault={handleTouchStart}>
     <pre class="notes" style="transform:translateY({scrollPos})">{data.slice(2).map(note => `${NOTE_NAMES[1 + note | 0]} ${((note % 1) * 100).toFixed().padStart(2,'0')}`).join('\n')}</pre>
   </div>
 
@@ -78,6 +120,7 @@ const handleScroll = event => {
   box-sizing:border-box;
 }
 .notes {
+  pointer-events: none;
   position: absolute;
   top: 50%;
   margin-top:-8px;
