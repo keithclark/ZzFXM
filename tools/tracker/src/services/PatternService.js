@@ -1,4 +1,4 @@
-import { patterns, patternsMeta, patternMuteStates } from '../stores.js';
+import { patterns, patternsMeta, patternMuteStates, sequence } from '../stores.js';
 import { clamp, round } from '../lib/utils.js';
 
 // This is used to auto-name patterns
@@ -34,11 +34,21 @@ export const addPattern = (pattern, name = `Pattern ${patternNo}`) => {
 
 
 /**
- * Delete a pattern from the current song
+ * Delete a pattern from the current song. Reassigns pattern indexes in the
+ * song sequence to account for the missing index.
  *
  * @param {number} index - Index of the pattern to remove
  */
 export const deletePattern = index => {
+  // Collapse the sequence list first
+  sequence.update(patterns => {
+    return patterns.map(pattern => {
+      if (pattern > index) {
+        return pattern - 1;
+      }
+      return pattern;
+    });
+  });
   patterns.update(patterns => {
     patterns.splice(index, 1)
     return patterns;

@@ -1,4 +1,4 @@
-import { instruments, instrumentsMeta } from '../stores.js';
+import { instruments, instrumentsMeta, patterns } from '../stores.js';
 import { decodeInstrumentParams } from 'zzfxm-song-encoder';
 
 let instrumentNo = 0;
@@ -27,7 +27,8 @@ export const addInstrument = (params, name = `Instrument ${instrumentNo}`) => {
 
 
 /**
- * Delete an instrument from the current song
+ * Delete an instrument from the current song. Reassigns instruments in the song
+ * patterns to account for the missing index.
  *
  * @param {number} index - Index of the instrument to remove
  */
@@ -39,6 +40,16 @@ export const deleteInstrument = index => {
   instrumentsMeta.update(meta => {
     meta.splice(index, 1);
     return meta;
+  });
+  patterns.update(patterns => {
+    patterns.forEach(pattern => {
+      pattern.forEach(channel => {
+        if (channel[0] > index) {
+          channel[0]--;
+        }
+      });
+    });
+    return patterns;
   });
   instrumentNo++;
 };
