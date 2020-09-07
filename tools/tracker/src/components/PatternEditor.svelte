@@ -1,5 +1,5 @@
 <script>
-import { patterns, sequence, channelMeters, patternsMeta, songPlaying } from '../stores.js';
+import { patterns, sequence, channelMeters, patternsMeta, songPlaying, patternMuteStates } from '../stores.js';
 import { addPattern, deletePattern, addChannel, deleteChannel, addRow, deleteRow, createTrack, createPattern, clearRow, setPatternData } from '../services/PatternService.js';
 import { playPattern, stopSong } from '../services/RendererService.js';
 import { createEventDispatcher } from 'svelte';
@@ -12,6 +12,7 @@ import Button from './Button.svelte';
 import TextProperty from './TextProperty.svelte';
 import NumberProperty from './NumberProperty.svelte';
 import PianoInput from './PianoInput.svelte';
+import ToggleButton from './ToggleButton.svelte';
 
 export let selectedChannel = 0;
 export let selectedRow = 0;
@@ -118,6 +119,20 @@ const handleStopClick = () => {
 const handlePianoToggleClick = () => {
   piano = !piano;
 }
+
+const handleUnmuteAllClick = () => {
+  $patternMuteStates[selectedPattern] = new Array(channelCount).fill(false);;
+}
+
+const handleSoloClick = () => {
+  const muteState = new Array(channelCount).fill(true);
+  muteState[selectedChannel] = false;
+  $patternMuteStates[selectedPattern] = muteState;
+}
+
+const handleMuteToggleClick = () => {
+  $patternMuteStates[selectedPattern][selectedChannel] = !$patternMuteStates[selectedPattern][selectedChannel]
+}
 </script>
 
 
@@ -135,7 +150,7 @@ const handlePianoToggleClick = () => {
     </div>
     <select class="select" on:input={handlePatternChange} bind:value={selectedPattern} size="2">
       {#each $patterns as pattern, i}
-        <option value={i}>{i}: {$patternsMeta[i]}</option>
+        <option value={i}>{i}: {$patternMuteStates[i].includes(true) ? '[M]':''} {$patternsMeta[i]}</option>
       {/each}
     </select>
   </Pane>
@@ -151,12 +166,17 @@ const handlePianoToggleClick = () => {
         </Field>
         <Field label="Track">
           <Button on:click={handleAddChannelClick} label="Add" />
+          <Button disabled={channelCount === 1} on:click={deleteChannelClick} label="Delete" />
           <Button on:click={clearChannel} label="Clear" />
           <Button on:click={copyChannel} label="Copy" />
           <Button disabled={!channelClipboard} on:click={pasteChannel} label="Paste" />
-          <Button disabled={channelCount === 1} on:click={deleteChannelClick} label="Delete" />
           <Button disabled={channelCount === 1 || selectedChannel === 0} on:click={moveChannelLeft} label="Move Left" />
           <Button disabled={channelCount === 1 || selectedChannel === channelCount - 1} on:click={moveChannelRight} label="Move Right" />
+        </Field>
+        <Field label="Track Mute">
+          <ToggleButton bind:checked={$patternMuteStates[selectedPattern][selectedChannel]} on:click={handleMuteToggleClick} label="Mute" />
+          <Button on:click={handleSoloClick} label="Solo" />
+          <Button on:click={handleUnmuteAllClick} label="Unmute All" />
         </Field>
         <Field label="Row">
           <Button on:click={handleAddRowClick} label="Add" />
@@ -169,7 +189,7 @@ const handlePianoToggleClick = () => {
     <div class="channels outset">
       {#each $patterns[selectedPattern] as channel, i}
         <div class="channel inset" bind:this={channelElems[i]} on:focusin={()=>selectedChannel = i} class:selected={i==selectedChannel}>
-          <Channel on:rowselect title={`Track ${i}`} bind:selectedRow={selectedRow} data={channel}></Channel>
+          <Channel on:rowselect bind:mute={$patternMuteStates[selectedPattern][i]} title={`Track ${i}`} bind:selectedRow={selectedRow} data={channel}></Channel>
           <div class="level" style="transform:scaleY({$channelMeters[i] || 0})"></div>
         </div>
       {/each}

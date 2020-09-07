@@ -8,6 +8,7 @@ import Field from './Field.svelte';
 export let data = [];
 export let title = 'Track';
 export let selectedRow = 0;
+export let mute = false;
 
 $: scrollPos = `${-selectedRow * 18}px`;
 $: totalRows = data.length - 3;
@@ -32,7 +33,7 @@ const handleScroll = event => {
 
 </script>
 
-<div class="channel">
+<div class:mute class="channel">
   <Toolbar>
     <Field label={title}>
       <select class="select" bind:value={data[0]}>
@@ -93,6 +94,9 @@ const handleScroll = event => {
 }
 .channel :global(.field__controls) {
   width: 100% !important;
+}
+.mute {
+  background:repeating-linear-gradient(45deg, #0001 0, #0001 5px,#0000 5px, #0000 10px);
 }
 pre {
   margin: 0;

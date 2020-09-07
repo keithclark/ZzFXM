@@ -29,6 +29,7 @@ export const masterVolume = new writable(.5);
 export const currentPlaybackPosition = new writable(0);
 export const currentPlaybackLength = new writable(0);
 export const channelMeters = new writable([]);
+export const patternMuteStates = new writable([]);
 export const songPlaying = new writable(false);
 
 
