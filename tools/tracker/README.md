@@ -1,6 +1,8 @@
 # ZzFXM Tracker
 
-A [Svelte](https://svelte.dev/) application for composing music to use with the ZzFXM JavaScript music player.
+A [Svelte](https://svelte.dev/) web application for composing music to use with the ZzFXM JavaScript music player.
+
+The tracker is availble to use [online](https://keithclark.github.io/ZzFXM/tracker/).
 
 ![Screen shot of the ZzFXM tracker interface](screenshot.png)
 
@@ -16,4 +18,4 @@ A [Svelte](https://svelte.dev/) application for composing music to use with the 
 ## Build for production
 
 1. Run `npm run dist`
-2. Deploy `/public` folder
+2. Deploy the `/public` folder.
