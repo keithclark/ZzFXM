@@ -7,3 +7,9 @@
 <Property {label} let:id={id}>
   <input {id} spellcheck="false" type="text" class="input" bind:value={value}>
 </Property>
+
+<style>
+  input {
+    width:8em;
+  }
+</style>

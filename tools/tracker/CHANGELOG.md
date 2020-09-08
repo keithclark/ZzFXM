@@ -3,6 +3,8 @@ v1.0.2b (7th Sept. 2020)
 * Added mute controls so tracks can be disabled while working on a pattern
 * Fixed issue with patterns not scrolling on touch devices
 * Updated Piano and Instrument toggle UI
+* Fixed errors caused by removing patterns or instruments
+* Fixed UI layout to collapse smaller screens
 
 v1.0.1b (5th Sept. 2020)
 

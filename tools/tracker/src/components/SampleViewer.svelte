@@ -12,24 +12,40 @@ $: if (data){
   generateSampleView();
 }
 
+if ('ResizeObserver' in window) {
+  const resizeObserver = new ResizeObserver(entries => {
+    for (const entry of entries) {
+      const {width, height} = entry.contentRect;
+      canvasWidth = width;
+      canvasHeight = height;
 
-const resizeObserver = new ResizeObserver(entries => {
-  for (const entry of entries) {
-    const {width, height} = entry.contentRect;
-    canvasWidth = width;
-    canvasHeight = height;
-
-    if (!debounce) {
-      debounce = true;
-      generateSampleView();
-      setTimeout(() => {
+      if (!debounce) {
+        debounce = true;
         generateSampleView();
-        debounce = false;
-      }, 500);
+        setTimeout(() => {
+          generateSampleView();
+          debounce = false;
+        }, 500);
+      }
     }
-  }
-});
+  });
 
+  onMount(() => {
+    resizeObserver.observe(canvas.parentElement);
+  });
+
+  onDestroy(() => {
+    resizeObserver.unobserve(canvas.parentElement);
+  });
+
+} else {
+  // Browser doesn't support ResizeObserver so let's used the initial values
+  // so the user can see _something_.
+  onMount(() => {
+    canvasWidth = canvas.parentElement.clientWidth;
+    canvasHeight = canvas.parentElement.clientHeight;
+  });
+}
 
 const generateSampleView = () => {
   if (!canvas) {
@@ -60,14 +76,6 @@ const generateSampleView = () => {
   context.stroke();
   context.closePath();
 }
-
-onMount(() => {
-  resizeObserver.observe(canvas.parentElement);
-});
-
-onDestroy(() => {
-  resizeObserver.unobserve(canvas.parentElement);
-});
 
 </script>
 
