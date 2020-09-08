@@ -13,6 +13,7 @@ import TextProperty from './TextProperty.svelte';
 import NumberProperty from './NumberProperty.svelte';
 import PianoInput from './PianoInput.svelte';
 import ToggleButton from './ToggleButton.svelte';
+import PlayButton from './PlayButton.svelte';
 
 export let selectedChannel = 0;
 export let selectedRow = 0;
@@ -108,12 +109,12 @@ const handlePatternChange = () => {
   selectedRow = 0;
 }
 
-const handlePlayClick = () => {
-  playPattern(selectedPattern);
-}
-
-const handleStopClick = () => {
-  stopSong();
+const togglePlayPatternClick = () => {
+  if ($songPlaying) {
+    stopSong()
+  } else {
+    playPattern(selectedPattern);
+  }
 }
 
 const handlePianoToggleClick = () => {
@@ -161,8 +162,7 @@ const handleMuteToggleClick = () => {
         <NumberProperty label="#" max={patternCount} bind:value={selectedPattern} on:input={handlePatternChange}></NumberProperty>
         <TextProperty label="Name" bind:value={$patternsMeta[selectedPattern]}></TextProperty>
         <Field label="Playback">
-          <Button disabled={$songPlaying}  keyboard="ENTER" label="Play Pattern" on:click={handlePlayClick} />
-          <Button disabled={!$songPlaying}  keyboard="ENTER" label="Stop" on:click={handleStopClick} />
+          <PlayButton playing={$songPlaying} keyboard="ENTER" label="Play Pattern" on:click={togglePlayPatternClick} />
         </Field>
         <Field label="Track">
           <Button on:click={handleAddChannelClick} label="Add" />

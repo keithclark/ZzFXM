@@ -1,7 +1,9 @@
 <script>
-import { sequence, patterns, patternsMeta, currentPlaybackPosition } from '../stores.js';
+import { sequence, patterns, patternsMeta, currentPlaybackPosition, songPlaying } from '../stores.js';
+import { playSong, stopSong } from '../services/RendererService.js';
 import { createEventDispatcher } from 'svelte';
 import Field from './Field.svelte';
+import PlayButton from './PlayButton.svelte';
 import Button from './Button.svelte';
 import Toolbar from './Toolbar.svelte';
 import Pane from './Pane.svelte';
@@ -19,6 +21,14 @@ const handleAddClick = () => {
 const handleDeleteClick = () => {
   $sequence = [...$sequence.slice(0, selectedPosition), ...$sequence.slice(selectedPosition + 1)];
   selectedPosition = Math.min(selectedPosition, $sequence.length - 1);
+}
+
+const togglePlaySongClick = () => {
+  if ($songPlaying) {
+    stopSong();
+  } else {
+    playSong();
+  }
 }
 
 const select = position => {
@@ -60,6 +70,9 @@ const color = seq => `hsl(${90+seq*20},35%,50%)`;
         <Button label="Delete" disabled={!hasSelection} on:click={handleDeleteClick} />
         <Button label="Move Left" disabled={!hasSelection || selectedPosition === 0} on:click={moveLeft} />
         <Button label="Move Right" disabled={!hasSelection || selectedPosition === $sequence.length - 1}  on:click={moveRight} />
+      </Field>
+      <Field label="Playback">
+        <PlayButton playing={$songPlaying} keyboard="ALT + ENTER" label="Play Song" on:click={togglePlaySongClick} />
       </Field>
       <div class="outset"></div>
     </Toolbar>
