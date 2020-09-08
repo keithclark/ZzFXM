@@ -20,6 +20,12 @@
   --field-padding: 3px;
 }
 
+@media (max-width: 1034px) {
+  :root {
+    --panel-spacing: var(--modal-spacing);
+  }
+}
+
 * {
   box-sizing: border-box;
 }
