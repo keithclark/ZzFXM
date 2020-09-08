@@ -114,7 +114,7 @@ const paste = () => {
         <NumberProperty min={0} max={$instruments.length - 1} label="#" bind:value={selected} />
         <TextProperty label="Name" bind:value={$instrumentsMeta[selected]} />
         <Field label="Playback">
-          <Button label="Play Instrument" on:click={handlePlayClick} />
+          <Button label="Play" on:click={handlePlayClick} />
         </Field>
         <Field label="Parameters">
           <Button label="Import" on:click={handleImportClick} />

@@ -77,14 +77,6 @@
     selectedRow.set(0);
   }
 
-  const handlePlaySongClick = () => {
-    playSong();
-  }
-
-  const handleStopClick = () => {
-    stopSong();
-  }
-
   const handleLoadSongClick = () => {
     fileElem.click();
   }
@@ -207,10 +199,6 @@
       <Toolbar>
         <TextProperty label="Title" bind:value={$title} />
         <NumberProperty label="Speed" bind:value={$speed} size={3} min={1} max={320} />
-        <Field label="Playback">
-          <Button disabled={$songPlaying} keyboard="ALT + ENTER" label="Play Song" on:click={handlePlaySongClick} />
-          <Button disabled={!$songPlaying} keyboard="ENTER" label="Stop" on:click={handleStopClick} />
-        </Field>
         <Field label="File">
           <Button label="New" on:click={handleNewSongClick} />
           <Button label="Load" on:click={handleLoadSongClick} />
