@@ -16,7 +16,6 @@
     align-items: center;
   }
   .field__label {
-    text-indent: 2px;
     white-space: nowrap;
   }
   .field__controls {
