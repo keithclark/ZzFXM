@@ -5,6 +5,10 @@ v1.0.2b (7th Sept. 2020)
 * Updated Piano and Instrument toggle UI
 * Fixed errors caused by removing patterns or instruments
 * Fixed UI layout to collapse smaller screens
+* Fixed issue with sticky sequence selection when song is playing
+* Fixed issue with instrument usage info not updating when changing track instrument
+* Converted Play/Stop button to toggle to save space
+* Moved song Play/Stop button to sequence panel
 
 v1.0.1b (5th Sept. 2020)
 
