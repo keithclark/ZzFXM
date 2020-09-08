@@ -16,6 +16,12 @@ import Button from './Button.svelte';
 </span>
 
 <style>
+  .toggleButton {
+    display: inline-flex;
+  }
+  .toggleButton > :global(*) {
+    flex: 1;
+  }
   .toggleButton > :global(*)::before {
     content: '';
     display: inline-block;

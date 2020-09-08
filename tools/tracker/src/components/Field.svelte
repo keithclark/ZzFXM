@@ -16,11 +16,14 @@
     align-items: center;
   }
   .field__label {
-    flex: 1;
-    text-indent:2px;
+    text-indent: 2px;
     white-space: nowrap;
   }
   .field__controls {
     display: inline-flex;
+    flex-wrap: wrap;
+  }
+  .field__controls > :global(*) {
+    flex: 1
   }
 </style>

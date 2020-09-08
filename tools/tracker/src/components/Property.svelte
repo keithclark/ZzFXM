@@ -7,25 +7,25 @@
   let id = createElementId();
 </script>
 
-<div class="field outset" title={hint}>
-  <label for={id} class="field__label embossed">{ label }</label>
-  <span class="field__controls inset">
+<div class="property outset" title={hint}>
+  <label for={id} class="property__label embossed">{ label }</label>
+  <span class="property__controls inset">
     <slot {id} />
   </span>
 </div>
 
 <style>
-  .field {
+  .property {
     display: flex;
     padding: var(--field-padding);
     align-items: center;
   }
-  .field__label {
+  .property__label {
     flex: 1;
-    text-indent: 2px;
     white-space: nowrap;
+    padding-right:6px;
   }
-  .field__controls {
+  .property__controls {
     display: inline-flex;
   }
 </style>
