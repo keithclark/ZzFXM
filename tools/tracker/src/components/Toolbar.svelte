@@ -11,7 +11,9 @@
     align-items: stretch;
   }
   .toolbar :global(.property__label), .toolbar :global(.field__label) {
-    flex:0
+    flex:0;
+    padding-left: 2px;
+    padding-right: 2px
   }
   .toolbar > :global(:last-child) {
     flex: 1;
