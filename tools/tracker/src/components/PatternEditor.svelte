@@ -189,7 +189,7 @@ const handleMuteToggleClick = () => {
     <div class="channels outset">
       {#each $patterns[selectedPattern] as channel, i}
         <div class="channel inset" bind:this={channelElems[i]} on:focusin={()=>selectedChannel = i} class:selected={i==selectedChannel}>
-          <Channel on:rowselect bind:mute={$patternMuteStates[selectedPattern][i]} title={`Track ${i}`} bind:selectedRow={selectedRow} data={channel}></Channel>
+          <Channel on:rowselect bind:mute={$patternMuteStates[selectedPattern][i]} title={`Track ${i}`} bind:selectedRow={selectedRow} bind:data={channel}></Channel>
           <div class="level" style="transform:scaleY({$channelMeters[i] || 0})"></div>
         </div>
       {/each}
