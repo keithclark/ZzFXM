@@ -421,11 +421,11 @@ export const playSong = async (fromStart = false) => {
 export const stopSong = async () => {
   if (processor) {
     killScriptProcessor();
-    await unregisterSound();
     songPlaying.set(false);
     channelMeters.set([]);
     isPlaying = false;
     frames = [];
+    await unregisterSound();
   }
 };
 
