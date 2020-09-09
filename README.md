@@ -28,6 +28,9 @@ The song format is loosely based on the MOD format, using patterns to handle rep
 
 This repo contains various tools to help you generate and work with ZzFXM songs:
 
+### [Tracker](./tools/tracker)
+A browser-based music tracker for composing songs for ZzFXM. (Available [online](https://keithclark.github.io/ZzFXM/tracker/).)
+
 ### [Song Conversion Tool](./tools/convert)
 A CLI tool for converting file in ProTracker MOD (M.K.) format to the ZzFXM format. This allows you to use tools such as [MilkyTracker](https://milkytracker.titandemo.org/) or the browser-based [Bassoon Tracker](https://www.stef.be/bassoontracker/) to author your songs. In order to keep ZzFXM small, only the volume and pattern break effects are 100% supported. The volume sliding effect is partially emulated by the song conversion tool by replacing the effect with computed volume steps.
 
@@ -126,7 +129,8 @@ A ZzFXM song is a series of nested arrays containing instrument, pattern and seq
   <zzfx-sound-bitCrush>?,
   <zzfx-sound-delay>?,
   <zzfx-sound-sustain-volume>?,
-  <zzfx-sound-decay>?
+  <zzfx-sound-decay>?,
+  <zzfx-sound-tremolo>?
 ]
 ```
 
@@ -154,6 +158,7 @@ Param | Description | Default | Min Value | Max Value
 `delay` | Overlap with itself for reverb and flanger effects (seconds) | 0 | 0 | 1000000000
 `sustainVolume` | Volume level for sustain (percent) | 1 | -1000000000 | 1000000000
 `decay` | Decay time, how long to reach sustain after attack | 0 | 0 | 1
+`tremolo` | Trembling effect, rate controlled by repeat time (precent) | 0 | 0 | 1
 
 ## `<pattern-list>` structure
 
