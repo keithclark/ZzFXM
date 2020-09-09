@@ -111,7 +111,6 @@ export const convertSong = (buffer, options) => {
     else if (type === 'sampleMeta') {
       instrumentCount++;
       if (value.size) {
-        console.log(value)
         let instrument;
         const instrumentIndex = instrumentMap.size + 1;
         if (options.noInstruments) {
