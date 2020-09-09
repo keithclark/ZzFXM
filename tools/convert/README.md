@@ -2,6 +2,15 @@
 
 This tool converts ProTracker MOD files into ZzFXM songs. It will attempt to assign instruments if it can.
 
+The ProTracker convertor can process the following ProTracker effects:
+
+Code | Description    | Support Level | Notes
+-|-|-|-
+`Axy` | Volume slide  | Emulated      | Volume slides are computed and replaced with `Cxx` steps
+`Cxx` | Set volume    | Full
+`Dxx` | Pattern break | Partial       | (only breaking to first row of next pattern is supported)
+
+
 ## Installation
 
 1. Clone this repo
@@ -9,14 +18,15 @@ This tool converts ProTracker MOD files into ZzFXM songs. It will attempt to ass
 ```
 cd tools/convert
 npm install
+npm link
 ```
 
 ## Use
 
-From the `tools/convert` dir you can run:
+You can run the convertor from the CLI:
 
 ```
-> ./bin/zzfx-convert input-song.mod output-song.js
+> zzfx-convert input-song.mod output-song.js
 ```
 
 ## Options

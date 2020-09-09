@@ -194,5 +194,17 @@ export const instruments = [
     alias: ['monobass'],
     size: 6600,
     zzfx: [1,0,52,,,0.2,2,,,,0.5,0.01]
+  },
+  {
+    name: 'st-02:peck',
+    alias: ['peck'],
+    size: 5800,
+    zzfx: [3,0,238,.01,,.4,2,2,,,-.5,,.1,,,,.01,,,.2]
+  },
+  {
+    name: 'st-01:pulse',
+    alias: ['pulse'],
+    size: 6400,
+    zzfx: [2,0,26,.02,,,2,2,,,,,-.03,,,,,,,.07]
   }
 ];

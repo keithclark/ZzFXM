@@ -1,3 +1,0 @@
-#!/usr/bin/env node --experimental-modules
-
-import '../cli.js';

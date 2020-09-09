@@ -23,7 +23,7 @@ let options = cli({
 
 const run = async (options) => {
   const buffer = await readFile(options.paths[0]);
-  const song = convertSong(buffer, options);
+  const { song, warnings } = convertSong(buffer, options);
   const assignedInstruments = []
   const unassignedInstruments = []
   const instrumentNames = [];
@@ -43,15 +43,20 @@ const run = async (options) => {
   console.log(`  • Sequence length: ${song.getSequenceLength()}`);
   console.log(`  • Instruments: ${song.getInstrumentCount()}`);
   console.log(`  • Patterns: ${song.getPatternCount()}`);
+  console.log(`  • Speed: ${song.speed} BPM`);
 
   if (assignedInstruments.length) {
-    console.log(`- Created ${assignedInstruments.length} zzfx instruments:`);
-    console.log(`  • ${assignedInstruments.join(', ')}`);
+    console.log(`- Created ${assignedInstruments.length} ZzFX instruments`);
   }
 
   if (unassignedInstruments.length) {
     console.log(`- Created ${unassignedInstruments.length} empty instruments`);
-    console.log(`  • ${unassignedInstruments.join(', ')}`);
+  }
+
+  if (warnings.length) {
+    console.log();
+    console.log(`WARNING: Conversion completed without error but you should be aware of the following, which could impact fidelity:`);
+    warnings.map(warning => console.log(`  • ${warning}`))
   }
 
   let dest;
@@ -81,6 +86,9 @@ run(options).catch(e => {
   let {message, code} = e;
   if (code == 'ENOENT') {
     message = `File '${e.path}' not found.`;
+  }
+  if (code == 'ERR_ZZFXM_NO_SUPPORT') {
+    message = `${e.message}. Try again with the -i argument to ignore errors.`;
   }
   console.log(message);
 });

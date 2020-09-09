@@ -1,5 +1,5 @@
 import { setArrayLength } from './utils.js';
-import { encodeSong, decodeSong } from './encoding.js';
+import { encodeSong, decodeSong } from 'zzfxm-song-encoder';
 import { validateInRange } from './validators.js';
 
 const INSTRUMENT_INDEX = 0;
