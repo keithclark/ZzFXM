@@ -8,5 +8,8 @@
   },
   "author": "Keith Clark",
   "license": "MIT",
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "zzfxm-song-encoder": "file:../zzfxm-song-encoder"
+  }
 }

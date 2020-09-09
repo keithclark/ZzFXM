@@ -1,10 +1,13 @@
 {
   "name": "zzfxm-convert",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Song conversion tool for ZzFXM",
   "type": "module",
   "main": "convert.js",
-  "bin": "./bin/zzfxm-convert",
+  "bin": "./bin/zzfxm-convert.js",
+  "engines": {
+    "node": ">=12.17.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
