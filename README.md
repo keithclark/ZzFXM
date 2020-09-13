@@ -283,6 +283,8 @@ Property | Description
 -|-
 `title` | Title of the song
 `author` | Name of the composer
+`authorUrl` | URL of the composer (Website, GitHub profile, Twitter)
+`license` | The license for the song
 `instruments` | Array of instrument names that map to `<instrument-list>`
 
 ```js
@@ -295,9 +297,11 @@ const mySong = [
   [ /* ... sequence ... */ ],
   120,
   {
-    title: "My Song",
-    author: "Keith Clark",
-    instruments: ["Bass", "Piano"]
+    "title": "My Song",
+    "author": "Keith Clark",
+    "authorUrl": "https://keithclark.co.uk/"
+    "license": "CC0",
+    "instruments": ["Bass", "Piano"]
   }
 ]
 ```
