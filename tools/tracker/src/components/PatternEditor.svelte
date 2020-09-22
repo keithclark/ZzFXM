@@ -3,7 +3,7 @@ import { patterns, sequence, channelMeters, patternsMeta, songPlaying, patternMu
 import { addPattern, deletePattern, addChannel, deleteChannel, addRow, deleteRow, createTrack, createPattern, clearRow, setPatternData } from '../services/PatternService.js';
 import { playPattern, stopSong } from '../services/RendererService.js';
 import { createEventDispatcher } from 'svelte';
-import { clamp } from '../lib/utils.js';
+import { clamp, deepClone } from '../lib/utils.js';
 import Channel from './Channel.svelte';
 import Pane from './Pane.svelte';
 import Toolbar from './Toolbar.svelte';
@@ -97,11 +97,11 @@ const pasteChannel = () => {
 }
 
 const handleCopyPatternClick = () => {
-  patternClipboard = $patterns[selectedPattern].slice();
+  patternClipboard = deepClone($patterns[selectedPattern]);
 }
 
 const handlePastePatternClick = () => {
-  setPatternData(selectedPattern, patternClipboard.slice());
+  setPatternData(selectedPattern, deepClone(patternClipboard));
 }
 
 const handlePatternChange = () => {
