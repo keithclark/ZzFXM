@@ -13,7 +13,7 @@ const clearSong = () => {
   clearSequence();
   clearInstruments();
   clearPatterns();
-}
+};
 
 
 /**
@@ -82,39 +82,42 @@ export const serializeSong = () => {
       patterns: get(patternsMeta)
     }
   ]);
-}
+};
 
 
 /**
- * Loads the song data from a File object and sets it
- * as the current song.
+ * Load song data from a File object and sets it as the current song.
  *
  * @param {File} file
  * @returns {Promise} A promise that resolves when the song has loaded
  */
 export const loadSongFromFile = file => {
   const url = URL.createObjectURL(file);
-  return fetch(url)
-    .then(res => res.text())
-    .then(loadSongFromString)
-    .catch(err => err)
-    .then(res => {
-      URL.revokeObjectURL(url);
-      if (res instanceof Error) {
-        throw res;
-      }
-      return res;
-    })
+  return loadSongFromUrl(url).finally(() => {
+    URL.revokeObjectURL(url);
+  });
 };
 
 
 /**
- * Loads the song data from a File object and sets it
- * as the current song.
+ * Load song data from a remote url and set it as the current song. Remote
+ * servers must have the appropriate CORS response headers set for this to work.
  *
- * @param {File} file
+ * @param {string} url - The url of the song to load
  * @returns {Promise} A promise that resolves when the song has loaded
  */
+export const loadSongFromUrl = url => {
+  return fetch(url)
+    .then(res => res.text())
+    .then(loadSongFromString)
+};
+
+
+/**
+ * Load song data from a string and set it as the current song.
+ *
+ * @param {string} songString — The encoded song data
+ */
 export const loadSongFromString = songString => {
-  setSong(decodeSong(songString))
+  setSong(decodeSong(songString));
 };
