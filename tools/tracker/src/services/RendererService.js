@@ -1,5 +1,26 @@
-import { patternMuteStates, uiFPS, bufferSize, sampleRate, patterns, instruments, sequence, speed, selectedRow, selectedPattern, selectedSequence, channelMeters, masterVolume, currentPlaybackLength, songPlaying } from '../stores.js'
-import { getCumlativeRowAtPosition, getSongLength } from './SequenceService.js';
+import {
+  patternMuteStates,
+  uiFPS,
+  bufferSize,
+  sampleRate,
+  patterns,
+  instruments,
+  sequence,
+  speed,
+  selectedRow,
+  selectedPattern,
+  selectedSequence,
+  channelMeters,
+  masterVolume,
+  currentPlaybackLength,
+  songPlaying
+} from '../stores.js';
+
+import {
+  getCumlativeRowAtPosition,
+  getSongLength
+} from './SequenceService.js';
+
 import { get } from 'svelte/store';
 
 /**
@@ -195,12 +216,19 @@ const mixChannelSampleData = (channel, start, length, leftChannelData, rightChan
   let peak = 0;
 
   if (channel) {
+    const { panning, sample } = channel;
     const step = zzfxR / zzfxX.sampleRate;
-    const {panning, attenuation, sample} = channel;
+    const sampleLength = sample.length;
+    let { attenuation } = channel;
 
     for (let i = start; i < start + length; i++) {
-      if (channel.offset >= sample.length) {
+      if (channel.offset >= sampleLength) {
         break;
+      }
+      // If we're approaching the end of the sample, quickly fade it out by
+      // increasing the attenuation to prevent clicking.
+      if (channel.offset > sampleLength - 99) {
+        attenuation += 1 / 99;
       }
       const data = (1 - attenuation) * sample[channel.offset | 0] || 0;
       leftChannelData[i] += -data * panning + data;
