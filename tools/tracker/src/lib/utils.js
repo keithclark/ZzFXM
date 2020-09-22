@@ -30,3 +30,13 @@ export const round = (value, decimalPlaces = 2) => {
 export const isInputElement = element => {
   return 'form' in element;
 };
+
+
+/**
+ * Performs a deep clone of an object.
+ *
+ * @param {object} obj - The object to clone
+ */
+export const deepClone = obj => {
+  return JSON.parse(JSON.stringify(obj));
+};
