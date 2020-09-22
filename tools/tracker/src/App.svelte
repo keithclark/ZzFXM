@@ -1,7 +1,7 @@
 <script>
 
   import { patterns, sequence, speed, title, selectedRow, selectedChannel, selectedPattern, selectedSequence, masterVolume, currentPlaybackPosition, songPlaying } from './stores.js';
-  import { serializeSong, createEmptySong, loadSongFromFile, loadSongFromString } from './services/SongService.js';
+  import { serializeSong, createEmptySong, loadSongFromFile, loadSongFromUrl, loadSongFromString } from './services/SongService.js';
   import { playPattern, playSong, stopSong, playNote } from './services/RendererService.js';
   import { getCumlativeRowAtPosition } from './services/SequenceService.js';
   import { adjustAttenuation, setNote } from './services/PatternService.js';
