@@ -36,10 +36,7 @@
   let showInstruments = window.matchMedia('(min-height: 800px)').matches;
 
   $: if (files) {
-    stopSong();
-    loadSongFromFile(files[0])
-      .then(resetSongPosition)
-      .catch(err => alert(err.message));
+    loadSong(loadSongFromFile, files[0]);
     files = null;
   }
 
@@ -50,6 +47,14 @@
   } else {
     currentPlaybackPosition.set(-1);
   }
+
+  const loadSong = (loader, src) => {
+    stopSong();
+    return loader(src)
+      .then(resetSongPosition)
+      .catch(err => alert(`Error loading ${src}\n\n${err.message}`));
+  }
+
 
   const resetSongPosition = () => {
     selectedSequence.set(0);
@@ -186,10 +191,14 @@
     resetSongPosition();
   }
 
-  if (new URLSearchParams(location.search).has('demo')) {
+  const params = new URLSearchParams(location.search);
+  if (params.has('demo')) {
     loadSongFromString(demoSong);
   } else {
     createEmptySong();
+    if (params.has('url')) {
+      loadSong(loadSongFromUrl, params.get('url'));
+    }
   }
 </script>
 
