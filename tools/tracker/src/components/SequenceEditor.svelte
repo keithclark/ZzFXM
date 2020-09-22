@@ -72,7 +72,7 @@ const color = seq => `hsl(${90+seq*20},35%,50%)`;
         <Button label="Move Right" disabled={!hasSelection || selectedPosition === $sequence.length - 1}  on:click={moveRight} />
       </Field>
       <Field label="Playback">
-        <PlayButton playing={$songPlaying} keyboard="ALT + ENTER" label="Play Song" on:click={togglePlaySongClick} />
+        <PlayButton playing={$songPlaying} keyboard="ALT + ENTER" on:click={togglePlaySongClick} />
       </Field>
       <div class="outset"></div>
     </Toolbar>
