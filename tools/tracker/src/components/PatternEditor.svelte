@@ -162,7 +162,7 @@ const handleMuteToggleClick = () => {
         <NumberProperty label="#" max={patternCount} bind:value={selectedPattern} on:input={handlePatternChange}></NumberProperty>
         <TextProperty label="Name" bind:value={$patternsMeta[selectedPattern]}></TextProperty>
         <Field label="Playback">
-          <PlayButton playing={$songPlaying} keyboard="ENTER" label="Play Pattern" on:click={togglePlayPatternClick} />
+          <PlayButton playing={$songPlaying} keyboard="ENTER" on:click={togglePlayPatternClick} />
         </Field>
         <Field label="Track">
           <Button on:click={handleAddChannelClick} label="Add" />
