@@ -17,6 +17,8 @@
   import Toolbar from './components/Toolbar.svelte';
   import Field from './components/Field.svelte';
   import Button from './components/Button.svelte';
+  import SongPropertiesModal from './components/modals/SongPropertiesModal.svelte';
+
   import ToggleButton from './components/ToggleButton.svelte';
   import Slider from './components/Slider.svelte';
   import Pane from './components/Pane.svelte';
@@ -32,6 +34,7 @@
   let showAboutModal = false;
   let showSourceModal = false;
   let showSettingsModal = false;
+  let showSongPropertiesModal = false;
   let showPaino = window.matchMedia('(min-height: 500px)').matches;
   let showInstruments = window.matchMedia('(min-height: 800px)').matches;
 
@@ -185,10 +188,8 @@
     showSettingsModal = !showSettingsModal;
   }
 
-  const handleLoadDemoClick = () => {
-    stopSong();
-    loadSongFromString(demoSong);
-    resetSongPosition();
+  const handleSongPropertiesClick = () => {
+    showSongPropertiesModal = !showSongPropertiesModal;
   }
 
   const params = new URLSearchParams(location.search);
@@ -213,7 +214,7 @@
           <Button label="Load" on:click={handleLoadSongClick} />
           <Button label="Save" on:click={handleSaveSongClick} />
           <Button label="Source" on:click={handleSourceClick} />
-          <Button label="Load Demo" on:click={handleLoadDemoClick} />
+          <Button label="Properties" on:click={handleSongPropertiesClick} />
         </Field>
         <Field label="Toggle Tools">
           <ToggleButton checked={showPaino} on:click={handlePianoToggleClick} label="Piano" />
@@ -243,6 +244,7 @@
 
 </main>
 
+<SongPropertiesModal bind:open={showSongPropertiesModal} />
 <KeyboardModal bind:open={showKeysHelpModal} />
 <AboutModal bind:open={showAboutModal} />
 <SourceModal bind:open={showSourceModal} />
