@@ -31,7 +31,9 @@
       <span>Error: {error}</span>
     {/if}
   </div>
-  <span slot="controls"><Button label="Ok" on:click={setClick} /></span>
+  <span slot="controls">
+    <Button label="Apply" on:click={setClick} />
+  </span>
 </Modal>
 
 <style>
@@ -41,6 +43,7 @@
   flex-direction: column;
   width: 100%;
   height: 100%;
+  min-height: 20em;
 }
 .inset {
   flex:1;
