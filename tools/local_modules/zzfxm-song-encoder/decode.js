@@ -1,13 +1,32 @@
 import { validateSong } from './validate.js';
 
 
+/**
+ * Parse a short-json string into an object.
+ *
+ * @param {string} str - the string to parse
+ */
+const parse = str => {
+  return JSON.parse(jsonSafe(str), (key, value) => {
+    if (value === null) {
+      return undefined;
+    }
+    return value;
+  });
+};
+
+
+/**
+ * Converts a serialised JS object into JSON compatiable format
+ * @param {*} str - the string to convert
+ */
 const jsonSafe = str => {
   return str.replace(/\[,/g,'[null,')
     .replace(/,,\]/g,',null]') // remove `undefined` work around
     .replace(/,\s*(?=[,\]])/g,',null')
     .replace(/([\[,]-?)(?=\.)/g,'$10')
     .replace(/-\./g,'-0.');
-}
+};
 
 
 /**
@@ -19,7 +38,7 @@ export const decodePatternParams = pattern => {
   return pattern.map(channel => {
     return [...channel].map(data => data || 0)
   });
-}
+};
 
 
 /**
@@ -52,7 +71,7 @@ export const decodeInstrumentParams = instrument => {
     }
     return param || 0;
   });
-}
+};
 
 
 /**
@@ -63,8 +82,8 @@ export const decodeInstrumentParams = instrument => {
  * @returns {Array.<Number>} ZzFX paramaters for the instrument
  */
 export const decodeInstrument = instrument => {
-  return decodeInstrumentParams(JSON.parse(jsonSafe(instrument)))
-}
+  return decodeInstrumentParams(parse(instrument))
+};
 
 
 /**
@@ -73,18 +92,15 @@ export const decodeInstrument = instrument => {
  * @param {string} song The song to decode
  */
 export const decodeSong = song => {
-  const jsonSong = jsonSafe(song.replace(/^export\s+default\s+/,''));
   let data;
-  let valid;
+
   try {
-    data = JSON.parse(jsonSong, (key, value) => {
-      return value === null ? undefined : value;
-    });
+    data = parse(song);
   } catch (e) {
-    throw new Error('Invalid song structure');
+    throw new Error('Invalid file format');
   }
 
-  valid = validateSong(data);
+  const valid = validateSong(data);
 
   if (valid instanceof Error) {
     throw valid;
@@ -93,5 +109,5 @@ export const decodeSong = song => {
   data[0] = data[0].map(decodeInstrumentParams);
   data[1] = data[1].map(decodePatternParams);
 
-  return data
-}
+  return data;
+};
