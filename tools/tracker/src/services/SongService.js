@@ -1,10 +1,10 @@
-import { patterns, instruments, instrumentsMeta, patternsMeta, title, sequence, speed } from '../stores.js'
+import { patterns, instruments, instrumentsMeta, patternsMeta, title, sequence, speed, meta } from '../stores.js'
 import { get } from 'svelte/store';
 import { decodeSong, encodeSong } from 'zzfxm-song-encoder';
 import { addInstrument, clearInstruments, createInstrument } from '../services/InstrumentService.js';
 import { addPattern, clearPatterns, createTrack } from '../services/PatternService.js';
 import { clearSequence } from '../services/SequenceService.js';
-
+import { removeEmptyStringValues } from '../lib/utils.js';
 
 /**
  * Clear out the current song so it can be populated with new data.
@@ -48,9 +48,9 @@ export const createEmptySong = () => {
 export const setSong = song => {
 
   clearSong();
+  meta.set(song[4]);
   title.set(song[4] && song[4].title || 'Untitled song');
   speed.set(song[3] || 125);
-
   song[0].forEach((instrument, index) => {
     const name = song[4] && song[4].instruments && song[4].instruments[index];
     addInstrument(instrument, name);
@@ -71,15 +71,21 @@ export const setSong = song => {
  */
 // TODO: rename to `serialize`?
 export const serializeSong = () => {
+
+  const tidyMeta = removeEmptyStringValues(get(meta));
+
   return encodeSong([
     get(instruments),
     get(patterns),
     get(sequence),
     get(speed),
     {
-      title: get(title),
-      instruments: get(instrumentsMeta),
-      patterns: get(patternsMeta)
+      ...tidyMeta,
+      ...{
+        title: get(title),
+        instruments: get(instrumentsMeta),
+        patterns: get(patternsMeta)
+      }
     }
   ]);
 };

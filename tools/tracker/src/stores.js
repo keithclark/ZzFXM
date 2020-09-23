@@ -15,6 +15,7 @@ export const instrumentsMeta = new writable([]);
 export const patterns = new writable([]);
 export const patternsMeta = new writable([]);
 export const sequence = new writable([]);
+export const meta = new writable({});
 
 
 // Selections
