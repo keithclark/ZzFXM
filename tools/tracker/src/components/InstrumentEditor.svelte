@@ -121,7 +121,7 @@ const paste = () => {
           <Button label="Export" on:click={handleExportClick} />
           <Button label="Library" on:click={handleSelectClick} />
         </Field>
-        <Field label="Pattern Usage"><span class="usage input">{usage.length ? usage : 'Unused'}</span></Field>
+        <Field label="Pattern Usage"><span class="usage output">{usage.length ? usage : 'Unused'}</span></Field>
         <div class="outset"></div>
       </Toolbar>
     </div>
