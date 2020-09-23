@@ -69,4 +69,7 @@ const handleSelectClick = () => {
   width:100%;
   height:100%;
 }
+.splitView {
+  height: 20em;
+}
 </style>
