@@ -40,3 +40,12 @@ export const isInputElement = element => {
 export const deepClone = obj => {
   return JSON.parse(JSON.stringify(obj));
 };
+
+
+/**
+ * Returns a copy of an object with empty string properties removed
+ */
+export const removeEmptyStringValues = obj => {
+  const filtered = Object.entries(obj).filter(([key, value]) => value !== '');
+  return Object.fromEntries(filtered);
+};
