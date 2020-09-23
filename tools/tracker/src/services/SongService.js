@@ -48,7 +48,7 @@ export const createEmptySong = () => {
 export const setSong = song => {
 
   clearSong();
-  meta.set(song[4]);
+  meta.set(song[4] || {});
   title.set(song[4] && song[4].title || 'Untitled song');
   speed.set(song[3] || 125);
   song[0].forEach((instrument, index) => {
