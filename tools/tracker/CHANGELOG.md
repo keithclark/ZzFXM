@@ -1,4 +1,4 @@
-v1.0.3b (?? Sept. 2020)
+v1.0.3b (23rd Sept. 2020)
 
 * Fixed issue with pattern copy / paste using reference instead of value
 * Fixed clicks when playing the end of instrument samples
