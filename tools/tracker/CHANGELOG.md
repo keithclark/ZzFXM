@@ -1,3 +1,12 @@
+v1.0.3b (?? Sept. 2020)
+
+* Fixed issue with pattern copy / paste using reference instead of value
+* Fixed clicks when playing the end of instrument samples
+* Fixed issue with instruments not importing correctly
+* Added support for loading songs by URL (server must supply CORS headers)
+* Added a song properties modal
+* Added support for extensible meta data. The tracker won't remove properties it doesn't understand.
+
 v1.0.2b (7th Sept. 2020)
 
 * Added mute controls so tracks can be disabled while working on a pattern
