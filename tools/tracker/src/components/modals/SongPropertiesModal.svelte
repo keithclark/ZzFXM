@@ -8,9 +8,12 @@
   import TextProperty from '../TextProperty.svelte';
 
   export let open = false;
+  let size = 0;
 
   $: duration = Math.floor($currentPlaybackLength * (125 / $speed) / 8.47);
-  $: size = serializeSong().length;
+  $: if (open === true) {
+    size = serializeSong().length;
+  }
 
 </script>
 
