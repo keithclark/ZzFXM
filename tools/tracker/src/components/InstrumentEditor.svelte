@@ -131,7 +131,7 @@ const paste = () => {
         <NumberProperty size={4} label="Volume" hint="Volume scale (percent)" min="0" max="1000000000" step="0.1" on:input={handleChange} bind:value={instrument[0]} />
         <NumberProperty size={4} label="Frequency" hint="Frequency of sound (Hz)" min="-1000000000" max="1000000000" step="1" on:input={handleChange} bind:value={instrument[2]} />
         <Property label="Shape">
-          <select class="select" bind:value={instrument[6]}>
+          <select class="select" on:input={handleChange} bind:value={instrument[6]}>
             {#each shapeOptions as option}
               <option value={option.id}>{option.label}</option>
             {/each}
