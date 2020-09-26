@@ -37,6 +37,7 @@ let clipboard;
 let showInstrumentPicker = false;
 let playOnChange = true;
 let testNote = 13;
+let currentNote;
 
 $: selected = clamp(selected, 0, $instruments.length - 1);
 $: instrument = $instruments[selected];
@@ -45,13 +46,21 @@ $: usage = $patterns.map((pattern, i) => {
   return pattern.some(channel => channel[0] === selected) && i
 }).filter(x => x !== false);
 
+
+const playTestNote = async (instrument, note) => {
+  if (currentNote) {
+    currentNote.stop();
+  }
+  currentNote = await playNote(instrument, note);
+}
+
 const handlePlayClick = () => {
-  playNote(selected, testNote);
+  playTestNote(selected, testNote);
 }
 
 const handleChange = () => {
   if (playOnChange) {
-    playNote(selected, testNote);
+    playTestNote(selected, testNote);
   }
 }
 
@@ -132,7 +141,7 @@ const paste = () => {
               <option value={note.id}>{note.label}</option>
             {/each}
           </select>
-          <ToggleButton keyboard="space" hint="Automatically play when changing properties" label="Auto Play" bind:checked={playOnChange} />
+          <ToggleButton hint="Automatically play when changing properties" label="Auto Play" bind:checked={playOnChange} />
         </Field>
         <Field label="Parameters">
           <Button label="Import" on:click={handleImportClick} />
