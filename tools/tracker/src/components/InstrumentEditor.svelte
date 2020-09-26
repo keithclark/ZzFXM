@@ -1,12 +1,14 @@
 <script>
 import { instrumentsMeta, patterns, instruments } from '../stores.js';
 import { playNote } from '../services/RendererService.js';
+import { getNoteName } from '../services/PatternService.js';
 import { addInstrument, deleteInstrument, setInstrumentParams } from '../services/InstrumentService.js';
 import { decodeInstrument, encodeInstrument } from 'zzfxm-song-encoder';
 import { clamp } from '../lib/utils.js';
 import Pane from './Pane.svelte';
 import Toolbar from './Toolbar.svelte';
 import Button from './Button.svelte';
+import ToggleButton from './ToggleButton.svelte';
 import Field from './Field.svelte';
 import Property from './Property.svelte';
 import TextProperty from './TextProperty.svelte';
@@ -15,6 +17,13 @@ import SampleViewer from './SampleViewer.svelte';
 import InstrumentPicker from './InstrumentPicker.svelte';
 
 export let selected = 0;
+
+const notelist = new Array(36).fill(0).map((value, index) => {
+  return {
+    id: index + 1,
+    label: getNoteName(index + 2)
+  }
+});
 
 const shapeOptions = [
   {id: 0, label: 'Sin'},
@@ -26,21 +35,24 @@ const shapeOptions = [
 
 let clipboard;
 let showInstrumentPicker = false;
+let playOnChange = true;
+let testNote = 13;
 
 $: selected = clamp(selected, 0, $instruments.length - 1);
 $: instrument = $instruments[selected];
-$: instrumentName = $instrumentsMeta[selected];
 $: buffer = zzfxG(...instrument);
 $: usage = $patterns.map((pattern, i) => {
   return pattern.some(channel => channel[0] === selected) && i
 }).filter(x => x !== false);
 
 const handlePlayClick = () => {
-  playNote(selected, 1);
+  playNote(selected, testNote);
 }
 
 const handleChange = () => {
-  playNote(selected, 1);
+  if (playOnChange) {
+    playNote(selected, testNote);
+  }
 }
 
 const handleImportClick = () => {
@@ -115,6 +127,12 @@ const paste = () => {
         <TextProperty label="Name" bind:value={$instrumentsMeta[selected]} />
         <Field label="Playback">
           <Button label="Play" on:click={handlePlayClick} />
+          <select class="select" bind:value={testNote}>
+            {#each notelist as note}
+              <option value={note.id}>{note.label}</option>
+            {/each}
+          </select>
+          <ToggleButton keyboard="space" hint="Automatically play when changing properties" label="Auto Play" bind:checked={playOnChange} />
         </Field>
         <Field label="Parameters">
           <Button label="Import" on:click={handleImportClick} />
