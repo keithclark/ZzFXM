@@ -1,5 +1,6 @@
 <script>
 import { instrumentsMeta } from '../stores.js';
+import { getNoteName } from '../services/PatternService.js';
 import { clamp } from '../lib/utils.js';
 import PanningProperty from './PanningProperty.svelte';
 import Toolbar from './Toolbar.svelte';
@@ -14,16 +15,6 @@ $: scrollPos = `${-selectedRow * 18}px`;
 $: totalRows = data.length - 3;
 
 let scrollSpeed = 0;
-
-const NOTE_NAMES = [
-  'REL', '---',
-  'C-1', 'C#1', 'D-1', 'D#1', 'E-1', 'F-1',
-  'F#1', 'G-1', 'G#1', 'A-1', 'A#1', 'B-1',
-  'C-2', 'C#2', 'D-2', 'D#2', 'E-2', 'F-2',
-  'F#2', 'G-2', 'G#2', 'A-2', 'A#2', 'B-2',
-  'C-3', 'C#3', 'D-3', 'D#3', 'E-3', 'F-3',
-  'F#3', 'G-3', 'G#3', 'A-3', 'A#3', 'B-3'
-];
 
 const handleScroll = event => {
   const {deltaY, deltaMode} = event;
@@ -87,7 +78,7 @@ const handleTouchStart = event => {
   </Toolbar>
 
   <div class="noteList" tabindex="0" on:wheel={handleScroll} on:touchstart|preventDefault={handleTouchStart}>
-    <pre class="notes" style="transform:translateY({scrollPos})">{data.slice(2).map(note => `${NOTE_NAMES[1 + note | 0]} ${((note % 1) * 100).toFixed().padStart(2,'0')}`).join('\n')}</pre>
+    <pre class="notes" style="transform:translateY({scrollPos})">{data.slice(2).map(note => `${getNoteName([1 + note | 0])} ${((note % 1) * 100).toFixed().padStart(2,'0')}`).join('\n')}</pre>
   </div>
 
   <div class="outset">
