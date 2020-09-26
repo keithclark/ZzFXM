@@ -1,18 +1,19 @@
 <script>
 import Button from './Button.svelte';
 
-  export let label = '';
-  export let disabled = false;
-  export let keyboard = '';
-  export let checked = false;
+export let hint = '';
+export let label = '';
+export let disabled = false;
+export let keyboard = '';
+export let checked = false;
 
-  const handleToggleClick = () => {
-    checked = !checked;
-  }
+const handleToggleClick = () => {
+  checked = !checked;
+}
 </script>
 
 <span class:checked class="toggleButton">
-  <Button on:click on:click={handleToggleClick} {label} {disabled} {keyboard} />
+  <Button on:click on:click={handleToggleClick} {label} {disabled} {keyboard} {hint} />
 </span>
 
 <style>

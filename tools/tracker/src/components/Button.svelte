@@ -1,10 +1,21 @@
 <script>
-  export let label = '';
-  export let disabled = false;
-  export let keyboard = '';
+export let hint = '';
+export let label = '';
+export let disabled = false;
+export let keyboard = '';
+
+let title;
+
+$: if (hint && keyboard) {
+  title = `${hint}\n\nShortcut: ${keyboard}`;
+} else if (hint) {
+  title = `${hint}`;
+} else if (keyboard) {
+  title = `Shortcut: ${keyboard}`;
+}
 </script>
 
-<button title={keyboard ? `Shortcut: ${keyboard}`: ''} class="outset" {disabled} on:click>{ label }</button>
+<button class="outset" {disabled} {title} on:click>{ label }</button>
 
 <style>
   button {
