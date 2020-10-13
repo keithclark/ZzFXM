@@ -1,3 +1,13 @@
+v1.0.4b (13th Oct. 2020)
+
+* Fixed incorrect key map for the piano input
+* Added note preview option to instrument editor
+* Added autoplay toggle to instrument editor
+* Fixed issue with shape not applying to preview sound when changing value
+* Fixed issue with instrument preview sound layering - previous sound is now stopped
+* Added hint property to `<Button>` and `<ToggleButton>` for contextual help
+* Updated Sanxion to use tremolo effect and removed a spurious note
+
 v1.0.3b (23rd Sept. 2020)
 
 * Fixed issue with pattern copy / paste using reference instead of value
