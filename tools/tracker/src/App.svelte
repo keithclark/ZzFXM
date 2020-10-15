@@ -27,7 +27,6 @@
   import SourceEditor from './components/SourceEditor.svelte';
   import Preferences from './components/Preferences.svelte';
   import SongProperties from './components/SongProperties.svelte';
-  import demoSong from './demo.js';
 
   let files;
   let fileElem;
@@ -194,13 +193,10 @@
   }
 
   const params = new URLSearchParams(location.search);
-  if (params.has('demo')) {
-    loadSongFromString(demoSong);
-  } else {
-    createEmptySong();
-    if (params.has('url')) {
-      loadSong(loadSongFromUrl, params.get('url'));
-    }
+
+  createEmptySong();
+  if (params.has('url')) {
+    loadSong(loadSongFromUrl, params.get('url'));
   }
 </script>
 
