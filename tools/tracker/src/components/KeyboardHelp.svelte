@@ -1,8 +1,6 @@
 <script>
-  import Modal from '../Modal.svelte';
-  import { PATTERN_ROW_COARSE_STEP } from '../../config.js';
+  import { PATTERN_ROW_COARSE_STEP } from '../config.js';
 
-  export let open = false;
 
   const isMac = navigator.userAgent.indexOf('Mac OS X') > -1;
 
@@ -42,21 +40,20 @@
 
 </script>
 
-<Modal title="Keyboard shortcuts" bind:open={open}>
-  {#each keymap as group}
-    {group.name}
-    <dl>
-      {#each group.shortcuts as shortcut}
-        <dt>
-          {#each shortcut.keys as key, i}
-            {#if i}&nbsp;+&nbsp;{/if}<kbd>{key}</kbd>
-          {/each}
-        </dt>
-        <dd>{shortcut.desc}</dd>
-      {/each}
-    </dl>
-  {/each}
-</Modal>
+{#each keymap as group}
+  {group.name}
+  <dl>
+    {#each group.shortcuts as shortcut}
+      <dt>
+        {#each shortcut.keys as key, i}
+          {#if i}&nbsp;+&nbsp;{/if}<kbd>{key}</kbd>
+        {/each}
+      </dt>
+      <dd>{shortcut.desc}</dd>
+    {/each}
+  </dl>
+{/each}
+
 
 <style>
   kbd {
