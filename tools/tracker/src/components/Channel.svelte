@@ -105,7 +105,6 @@ const handleTouchStart = event => {
   background-repeat: no-repeat;
   background-position: 0 50%;
   text-align-last: justify;
-  font-family: monospace;
   line-height:18px;
   width:100%;
   box-sizing:border-box;
@@ -114,7 +113,7 @@ const handleTouchStart = event => {
   pointer-events: none;
   position: absolute;
   top: 50%;
-  margin-top:-8px;
+  margin: -8px 0 0 0;
   width:100%;
   min-width:0;
   padding:0 1em;
@@ -131,8 +130,5 @@ const handleTouchStart = event => {
 }
 .mute {
   background:repeating-linear-gradient(45deg, #0001 0, #0001 5px,#0000 5px, #0000 10px);
-}
-pre {
-  margin: 0;
 }
 </style>
