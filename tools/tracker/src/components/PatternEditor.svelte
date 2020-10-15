@@ -117,10 +117,6 @@ const togglePlayPatternClick = () => {
   }
 }
 
-const handlePianoToggleClick = () => {
-  piano = !piano;
-}
-
 const handleUnmuteAllClick = () => {
   $patternMuteStates[selectedPattern] = new Array(channelCount).fill(false);;
 }
