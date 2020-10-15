@@ -24,6 +24,7 @@
     "zzfxm-instruments": "file:../local_modules/zzfxm-instruments"
   },
   "dependencies": {
+    "pako": "^1.0.11",
     "sirv-cli": "^0.4.4"
   }
 }

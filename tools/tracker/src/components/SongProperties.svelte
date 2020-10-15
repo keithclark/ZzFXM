@@ -9,11 +9,27 @@
 
   let duration = '?';
   let size = '?';
+  let gzipSize = '?';
+  let timer;
+
+  const updateSize = () => {
+    size = serializeSong().length;
+  }
 
   onMount(() => {
     duration = Math.floor($currentPlaybackLength * (125 / $speed) / 8.47);
-    size = serializeSong().length;
+    updateSize();
+    if ('pako' in window) {
+      gzipSize = pako.deflate(serializeSong({noMeta: true})).length;
+    }
   });
+
+  $: if ($title || $meta) {
+    if (timer) {
+      clearTimeout(timer);
+    }
+    timer = setTimeout(updateSize, 1000);
+  }
 </script>
 
 
@@ -27,4 +43,5 @@
 <PropertyList label="Properties">
   <Property label="Playback time"><span class="output">{duration} seconds</span></Property>
   <Property label="Raw file size"><span class="output">{size} bytes</span></Property>
+  <Property label="Deflated file size (no meta data)"><span class="output">{gzipSize} bytes</span></Property>
 </PropertyList>
