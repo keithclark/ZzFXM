@@ -70,23 +70,27 @@ export const setSong = song => {
  * @returns {string} the serialised song data
  */
 // TODO: rename to `serialize`?
-export const serializeSong = () => {
-
+export const serializeSong = (options = {}) => {
   const tidyMeta = removeEmptyStringValues(get(meta));
+  let serializedMeta;
 
-  return encodeSong([
-    get(instruments),
-    get(patterns),
-    get(sequence),
-    get(speed),
-    {
+  if (!options.noMeta) {
+    serializedMeta = {
       ...tidyMeta,
       ...{
         title: get(title),
         instruments: get(instrumentsMeta),
         patterns: get(patternsMeta)
       }
-    }
+    };
+  }
+
+  return encodeSong([
+    get(instruments),
+    get(patterns),
+    get(sequence),
+    get(speed),
+    serializedMeta
   ]);
 };
 
