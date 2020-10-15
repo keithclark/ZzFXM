@@ -1,5 +1,9 @@
-v1.0.4b (13th Oct. 2020)
+v1.0.4b (15th Oct. 2020)
 
+* Playback marker will scroll into view when playing.
+* Added gzip (deflate) size report to song properties pane
+* Reworked modal windows. Added ESC to close
+* Better styling for select elements
 * Fixed incorrect key map for the piano input
 * Added note preview option to instrument editor
 * Added autoplay toggle to instrument editor
