@@ -7,7 +7,14 @@ import { terser } from 'rollup-plugin-terser';
 
 const production = !process.env.ROLLUP_WATCH;
 
-export default [{
+export default [
+	{
+		input: 'node_modules/pako/dist/pako_deflate.min',
+		output: {
+			file: 'public/build/pako.js'
+		}
+	},
+	{
 	input: 'src/main.js',
 	output: {
 		sourcemap: true,
