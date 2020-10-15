@@ -5,18 +5,32 @@ import { fade, fly } from 'svelte/transition';
 export let open = false;
 export let title = '';
 
+const handleKeyPress = e => {
+  if (!open) {
+    return;
+  }
+  if (e.key === 'Escape') {
+    close();
+    e.preventDefault();
+  }
+};
+
+const close = () => {
+  open = false;
+};
 </script>
 
 {#if open}
   <div class="overlay" transition:fade={{duration: 150}}></div>
   <dialog class="modal" transition:fly={{duration: 150, y: 10}}>
-    <div class="modal__header outset embossed">{title} <Button label="X" on:click={()=>open=false} /></div>
-    <div class="modal__body outset"><slot /></div>
-    <div class="modal__footer outset">
-      <slot name="controls"/>
+    <div class="modal__header outset embossed">
+      {title} <Button label="×" on:click={close} />
     </div>
+    <div class="modal__body outset"><slot /></div>
   </dialog>
 {/if}
+
+<svelte:window on:keydown={handleKeyPress}/>
 
 <style>
 .modal {
@@ -34,7 +48,7 @@ export let title = '';
   margin: 0;
   padding: 0;
 }
-.modal__header, .modal__footer {
+.modal__header {
   padding: var(--modal-spacing);
 }
 .modal__header {
@@ -42,12 +56,6 @@ export let title = '';
   display: grid;
   grid-template-columns: 1fr auto;
   align-items: center;
-}
-.modal__footer {
-  text-align: center;
-}
-.modal__footer:empty {
-  display: none;
 }
 .modal__body {
   padding: var(--panel-spacing);
@@ -57,10 +65,10 @@ export let title = '';
 .overlay {
   content: '';
   position: fixed;
-  top:0;
-  left:0;
-  right:0;
-  bottom:0;
-  background:#0006;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #0006;
 }
 </style>

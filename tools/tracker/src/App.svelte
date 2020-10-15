@@ -17,15 +17,16 @@
   import Toolbar from './components/Toolbar.svelte';
   import Field from './components/Field.svelte';
   import Button from './components/Button.svelte';
-  import SongPropertiesModal from './components/modals/SongPropertiesModal.svelte';
 
   import ToggleButton from './components/ToggleButton.svelte';
   import Slider from './components/Slider.svelte';
   import Pane from './components/Pane.svelte';
-  import KeyboardModal from './components/modals/KeyboardModal.svelte';
-  import AboutModal from './components/modals/AboutModal.svelte';
-  import SourceModal from './components/modals/SourceModal.svelte';
-  import SettingsModal from './components/modals/SettingsModal.svelte';
+  import Modal from './components/Modal.svelte';
+  import KeyboardHelp from './components/KeyboardHelp.svelte';
+  import About from './components/About.svelte';
+  import SourceEditor from './components/SourceEditor.svelte';
+  import Preferences from './components/Preferences.svelte';
+  import SongProperties from './components/SongProperties.svelte';
   import demoSong from './demo.js';
 
   let files;
@@ -244,11 +245,25 @@
 
 </main>
 
-<SongPropertiesModal bind:open={showSongPropertiesModal} />
-<KeyboardModal bind:open={showKeysHelpModal} />
-<AboutModal bind:open={showAboutModal} />
-<SourceModal bind:open={showSourceModal} />
-<SettingsModal bind:open={showSettingsModal} />
+<Modal title="Source" bind:open={showSourceModal}>
+  <SourceEditor on:change={() => showSourceModal = false}/>
+</Modal>
+
+<Modal title="About" bind:open={showAboutModal}>
+  <About />
+</Modal>
+
+<Modal title="Song Properties" bind:open={showSongPropertiesModal}>
+  <SongProperties />
+</Modal>
+
+<Modal title="Settings" bind:open={showSettingsModal}>
+  <Preferences />
+</Modal>
+
+<Modal title="Keyboard shortcuts" bind:open={showKeysHelpModal}>
+  <KeyboardHelp />
+</Modal>
 
 <input type="file" hidden bind:this={fileElem} bind:files>
 <svelte:window on:keydown={handleKeyPress} />

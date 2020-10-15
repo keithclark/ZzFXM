@@ -1,49 +1,49 @@
 <script>
-  import Modal from '../Modal.svelte';
-  import Button from '../Button.svelte';
-  import { serializeSong, loadSongFromString } from '../../services/SongService.js';
-  export let open = false;
+  import Button from './Button.svelte';
+  import { serializeSong, loadSongFromString } from '../services/SongService.js';
+  import { createEventDispatcher, onMount } from 'svelte';
 
   let src;
   let error;
 
-  $: if (open) {
+  const dispatch = createEventDispatcher()
+
+  onMount(()=> {
     src = serializeSong();
     error = null;
-  }
+  });
 
   const setClick = () => {
     try {
       loadSongFromString(src);
-      open = false;
+      dispatch('change');
     } catch (e) {
       error = e.message;
     }
   }
 </script>
 
-<Modal title="Source" bind:open={open}>
-  <div class="wrap">
-    <div class="inset">
-      <textarea class="inset input" bind:value={src}></textarea>
-    </div>
-    {#if error}
-      <span>Error: {error}</span>
-    {/if}
+<div class="wrap">
+  <div class="inset">
+    <textarea class="inset input" bind:value={src}></textarea>
   </div>
-  <span slot="controls">
+  {#if error}
+    <span>Error: {error}</span>
+  {/if}
+  <span>
     <Button label="Apply" on:click={setClick} />
   </span>
-</Modal>
+</div>
+
 
 <style>
-
 .wrap {
   display:flex;
   flex-direction: column;
   width: 100%;
   height: 100%;
   min-height: 20em;
+  gap: var(--panel-spacing);
 }
 .inset {
   flex:1;
