@@ -1,3 +1,10 @@
+v1.0.5b (20th Oct. 2020)
+
+* Fixed font in pattern editor for Safari
+* Fixed `<select>` styling in Safari
+* Fixed source editor collapsing in Safari
+* Fixed "About" content in Safari
+
 v1.0.4b (15th Oct. 2020)
 
 * Playback marker will scroll into view when playing.
