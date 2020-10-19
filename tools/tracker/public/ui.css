@@ -47,7 +47,9 @@ body {
   user-select: none;
   overflow: auto;
 }
-
+pre {
+  font: inherit
+}
 .input {
   border: none;
   background: #999;
@@ -69,6 +71,7 @@ body {
   margin:0;
 }
 .select:not([size]) {
+  -webkit-appearance: none;
   appearance: none;
   background-image: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22%230008%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20d%3D%22M287%2069a18%2018%200%2000-13-5H18c-5%200-9%202-12%205a18%2018%200%2000-6%2013c0%205%202%2010%205%2013l128%20128c4%204%208%205%2013%205s9-1%2013-5L287%2095c4-3%205-8%205-13s-2-9-5-13z%22%2F%3E%3C%2Fsvg%3E');
   background-position: right .5em top 50%;

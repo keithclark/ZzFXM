@@ -104,6 +104,7 @@ const handleTouchStart = event => {
   background-size:100% 18px;
   background-repeat: no-repeat;
   background-position: 0 50%;
+  text-align: center;
   text-align-last: justify;
   line-height:18px;
   width:100%;
@@ -121,6 +122,7 @@ const handleTouchStart = event => {
   background-size:100% 72px;
   white-space: pre-line;
   will-change: transform;
+  word-spacing: 4em;
 }
 .channel :global(.field) {
   align-items: center!important;

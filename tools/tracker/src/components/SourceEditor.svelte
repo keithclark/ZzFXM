@@ -38,11 +38,8 @@
 
 <style>
 .wrap {
-  display:flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
-  min-height: 20em;
+  display: grid;
+  grid-template-rows: 1fr auto;
   gap: var(--panel-spacing);
 }
 .inset {
@@ -51,8 +48,10 @@
 textarea {
   width: 100%;
   height: 100%;
+  min-height:20em;
   white-space: pre-line;
   word-break: break-all;
   resize: none;
+  display: block;
 }
 </style>
