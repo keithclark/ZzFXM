@@ -13,10 +13,10 @@
     error = null;
   });
 
-  const setClick = () => {
+  const applyClick = () => {
     try {
       loadSongFromString(src);
-      dispatch('change');
+      dispatch('apply');
     } catch (e) {
       error = e.message;
     }
@@ -31,7 +31,7 @@
     <span>Error: {error}</span>
   {/if}
   <span>
-    <Button label="Apply" on:click={setClick} />
+    <Button label="Apply" on:click={applyClick} />
   </span>
 </div>
 
