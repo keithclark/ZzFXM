@@ -1,11 +1,8 @@
 <script>
 import { playSound } from '../services/RendererService';
 import { createEventDispatcher } from 'svelte';
-import Modal from './Modal.svelte';
 import Button from './Button.svelte';
 import { percussion, keyboards, wind } from 'zzfxm-instruments';
-
-export let open = false;
 
 const dispatch = createEventDispatcher();
 
@@ -25,24 +22,19 @@ const instruments = Object.entries({percussion, keyboards, wind}).map(([name, it
 let group = instruments[0];
 let selection = null;
 
-$: if (open) {
-  selection = null
-}
 
 const handleChange = () => {
   if (selection) {
     playSound(selection.params);
   }
-}
+};
 
-const handleSelectClick = () => {
-  dispatch('select', selection);
-  open = false;
-  selection = null;
-}
+const handleApplyClick = () => {
+  dispatch('apply', selection);
+};
 </script>
 
-<Modal title="Select an instrument" bind:open={open}>
+<div class="wrap">
   <div class="splitView">
     <div class="inset">
       <select class="select" size="2" bind:value={group}>
@@ -59,12 +51,17 @@ const handleSelectClick = () => {
       </select>
     </div>
   </div>
-  <span slot="controls">
-    <Button label="Select" disabled={!selection} on:click={handleSelectClick} />
-  </span>
-</Modal>
+  <div>
+    <Button label="Apply" disabled={!selection} on:click={handleApplyClick} />
+  </div>
+</div>
 
 <style>
+.wrap {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: var(--modal-spacing);
+}
 .splitView,.select {
   width:100%;
   height:100%;

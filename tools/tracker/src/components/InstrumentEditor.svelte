@@ -16,6 +16,7 @@ import TextProperty from './TextProperty.svelte';
 import NumberProperty from './NumberProperty.svelte';
 import SampleViewer from './SampleViewer.svelte';
 import InstrumentPicker from './InstrumentPicker.svelte';
+import Modal from './Modal.svelte';
 
 export let selected = 0;
 
@@ -108,9 +109,10 @@ const handleSelectClick = () => {
   showInstrumentPicker = true;
 }
 
-const handleInstrumentSelect = e => {
-  setInstrumentParams(selected, e.detail.params)
-  $instrumentsMeta[selected] = e.detail.name
+const handleInstrumentApply = e => {
+  setInstrumentParams(selected, e.detail.params);
+  $instrumentsMeta[selected] = e.detail.name;
+  showInstrumentPicker = false;
 }
 
 const copy = () => {
@@ -204,7 +206,9 @@ const paste = () => {
   </Pane>
 </div>
 
-<InstrumentPicker bind:open={showInstrumentPicker} on:select={handleInstrumentSelect} />
+<Modal title="Select an instrument" bind:open={showInstrumentPicker}>
+  <InstrumentPicker on:apply={handleInstrumentApply} />
+</Modal>
 
 <style>
 .instrument {
