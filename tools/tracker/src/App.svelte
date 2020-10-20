@@ -1,6 +1,6 @@
 <script>
 
-  import { patterns, sequence, speed, title, selectedRow, selectedChannel, selectedPattern, selectedSequence, masterVolume, currentPlaybackPosition, songPlaying } from './stores.js';
+  import { patterns, sequence, speed, title, selectedRow, selectedChannel, selectedPattern, selectedSequence, selectedInstrument, masterVolume, currentPlaybackPosition, songPlaying } from './stores.js';
   import { serializeSong, createEmptySong, loadSongFromFile, loadSongFromUrl, loadSongFromString } from './services/SongService.js';
   import { playPattern, playSong, stopSong, playNote } from './services/RendererService.js';
   import { getCumlativeRowAtPosition } from './services/SequenceService.js';
@@ -198,6 +198,10 @@
   if (params.has('url')) {
     loadSong(loadSongFromUrl, params.get('url'));
   }
+
+  $: if ($patterns[$selectedPattern][$selectedChannel]) {
+    selectedInstrument.set($patterns[$selectedPattern][$selectedChannel][0]);
+  }
 </script>
 
 <main>
@@ -236,9 +240,8 @@
   <PatternEditor piano={showPaino} bind:selectedChannel={$selectedChannel} bind:selectedRow={$selectedRow} bind:selectedPattern={$selectedPattern} on:patternselect={handlePatternSelect} />
 
   {#if showInstruments}
-    <InstrumentEditor />
+    <InstrumentEditor selected={$selectedInstrument} />
   {/if}
-
 </main>
 
 <Modal title="Source" bind:open={showSourceModal}>

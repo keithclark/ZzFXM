@@ -23,6 +23,7 @@ export const selectedRow = new writable();
 export const selectedChannel = new writable(0);
 export const selectedPattern = new writable(0);
 export const selectedSequence = new writable(0);
+export const selectedInstrument = new writable(0);
 
 
 // Audio
