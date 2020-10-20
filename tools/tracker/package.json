@@ -1,7 +1,7 @@
 {
   "name": "zzfxm-tracker",
   "description": "A music tracker for ZzFXM",
-  "version": "1.0.4b",
+  "version": "1.0.5b",
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
