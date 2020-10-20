@@ -5,6 +5,7 @@ import { getNoteName } from '../services/PatternService.js';
 import { addInstrument, deleteInstrument, setInstrumentParams } from '../services/InstrumentService.js';
 import { decodeInstrument, encodeInstrument } from 'zzfxm-song-encoder';
 import { clamp } from '../lib/utils.js';
+import { tick } from 'svelte';
 import Pane from './Pane.svelte';
 import Toolbar from './Toolbar.svelte';
 import Button from './Button.svelte';
@@ -39,13 +40,24 @@ let playOnChange = true;
 let testNote = 13;
 let currentNote;
 
+const waveformCache = new WeakMap();
+
 $: selected = clamp(selected, 0, $instruments.length - 1);
 $: instrument = $instruments[selected];
-$: buffer = zzfxG(...instrument);
+$: buffer = getWave(instrument);
 $: usage = $patterns.map((pattern, i) => {
   return pattern.some(channel => channel[0] === selected) && i
 }).filter(x => x !== false);
 
+const getWave = (instrument, recache) => {
+  if (recache || !waveformCache.has(instrument)) {
+    const buffer = zzfxG(...instrument);
+    const step = Math.max(1, (buffer.length / 2000) | 0);
+    const previewBuffer = buffer.filter((v, i) => i % step === 0);
+    waveformCache.set(instrument, previewBuffer);
+  }
+  return waveformCache.get(instrument);
+};
 
 const playTestNote = async (instrument, note) => {
   if (currentNote) {
@@ -58,10 +70,12 @@ const handlePlayClick = () => {
   playTestNote(selected, testNote);
 }
 
-const handleChange = () => {
+const handleChange = async () => {
   if (playOnChange) {
     playTestNote(selected, testNote);
   }
+  await tick();
+  buffer = getWave(instrument, true);
 }
 
 const handleImportClick = () => {
