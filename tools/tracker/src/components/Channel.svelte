@@ -16,6 +16,15 @@ $: totalRows = data.length - 3;
 
 let scrollSpeed = 0;
 
+const formatNote = note => {
+  const noteName = getNoteName([1 + note | 0]);
+  const attenuationValue = (note % 1) * 100;
+  if (attenuationValue === 0) {
+    return `${noteName} --`;
+  }
+  return `${noteName} ${attenuationValue.toFixed().padStart(2, '0')}`;
+};
+
 const handleScroll = event => {
   const {deltaY, deltaMode} = event;
   if (deltaMode === 0) {
@@ -78,7 +87,7 @@ const handleTouchStart = event => {
   </Toolbar>
 
   <div class="noteList" tabindex="0" on:wheel={handleScroll} on:touchstart|preventDefault={handleTouchStart}>
-    <pre class="notes" style="transform:translateY({scrollPos})">{data.slice(2).map(note => `${getNoteName([1 + note | 0])} ${((note % 1) * 100).toFixed().padStart(2,'0')}`).join('\n')}</pre>
+    <pre class="notes" style="transform:translateY({scrollPos})">{data.slice(2).map(formatNote).join('\n')}</pre>
   </div>
 
   <div class="outset">
@@ -109,6 +118,7 @@ const handleTouchStart = event => {
   line-height:18px;
   width:100%;
   box-sizing:border-box;
+  box-shadow: inset 0 0 2px 0 #0008;
 }
 .notes {
   pointer-events: none;
