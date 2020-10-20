@@ -1,7 +1,7 @@
 <script>
 
   import { patterns, sequence, speed, title, selectedRow, selectedChannel, selectedPattern, selectedSequence, selectedInstrument, masterVolume, currentPlaybackPosition, songPlaying } from './stores.js';
-  import { serializeSong, createEmptySong, loadSongFromFile, loadSongFromUrl, loadSongFromString } from './services/SongService.js';
+  import { serializeSong, createEmptySong, loadSongFromFile, loadSongFromUrl } from './services/SongService.js';
   import { playPattern, playSong, stopSong, playNote } from './services/RendererService.js';
   import { getCumlativeRowAtPosition } from './services/SequenceService.js';
   import { adjustAttenuation, setNote } from './services/PatternService.js';
@@ -245,7 +245,7 @@
 </main>
 
 <Modal title="Source" bind:open={showSourceModal}>
-  <SourceEditor on:change={() => showSourceModal = false}/>
+  <SourceEditor on:apply={() => showSourceModal = false}/>
 </Modal>
 
 <Modal title="About" bind:open={showAboutModal}>
