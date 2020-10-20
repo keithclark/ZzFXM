@@ -225,7 +225,7 @@ const handleMuteToggleClick = () => {
   .level {
     position: absolute;
     width: 32px;
-    background: linear-gradient(#fc0, #0f0);
+    background: linear-gradient(#fc0, #0c0);
     bottom: 50%;
     left: calc(50% - 16px);
     height: 150px;
