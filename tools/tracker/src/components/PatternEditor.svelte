@@ -92,7 +92,12 @@ const copyChannel = () => {
 }
 
 const pasteChannel = () => {
-  $patterns[selectedPattern][selectedChannel] = channelClipboard.slice();
+  const channelData = $patterns[selectedPattern][selectedChannel];
+  const clipboardData = channelClipboard.slice();
+  $patterns[selectedPattern][selectedChannel] = [
+    ...clipboardData.slice(0,channelData.length),
+    ...channelData.slice(clipboardData.length)
+  ];
   $patterns[selectedPattern] = $patterns[selectedPattern];
 }
 
