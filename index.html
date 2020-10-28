@@ -23,14 +23,14 @@
   </div>
   <p>Grab the code or contribute to the project at <a href="https://github.com/keithclark/ZzFXM">GitHub</a>.
 </header>
-
+<main>
 <section class="section" id="code">
   <h2>What is it?</h2>
   <p>ZzFXM is a tiny JavaScript function that generates stereo music tracks from patterns of note and instrument data.
   Instrument samples are created using a modified<sup>[<a href="#note-code-1">1</a>]</sup> version of the super-tiny <a href="https://github.com/KilledByAPixel/ZzFX">ZzFX</a> sound generator by <a href="https://twitter.com/KilledByAPixel">Frank Force</a>.
    <figure class="codeblock"><pre><code class="language-js">//! ZzFXM (v2.0.3) | (C) Keith Clark | MIT | https://github.com/keithclark/ZzFXM
 zzfxM=(n,f,t,e=125)=&gt;{let l,o,z,r,g,h,x,a,u,c,d,i,m,p,G,M=0,R=[],b=[],j=[],k=0,q=0,s=1,v={},w=zzfxR/e*60&gt;&gt;2;for(;s;k++)R=[s=a=d=m=0],t.map((e,d)=&gt;{for(x=f[e][k]||[0,0,0],s|=!!f[e][k],G=m+(f[e][0].length-2-!a)*w,p=d==t.length-1,o=2,r=m;o&lt;x.length+p;a=++o){for(g=x[o],u=o==x.length+p-1&amp;&amp;p||c!=(x[0]||0)|g|0,z=0;z&lt;w&amp;&amp;a;z++&gt;w-99&amp;&amp;u?i+=(i&lt;1)/99:0)h=(1-i)*R[M++]/2||0,b[r]=(b[r]||0)-h*q+h,j[r]=(j[r++]||0)+h*q+h;g&amp;&amp;(i=g%1,q=x[1]||0,(g|=0)&amp;&amp;(R=v[[c=x[M=0]||0,g]]=v[[c,g]]||(l=[...n[c]],l[2]*=2**((g-12)/12),g&gt;0?zzfxG(...l):[])))}m=G});return[b,j]}
-</code></pre><figcaption>The ZzFXM song generator function &mdash; 442 bytes (gzip)</figcaption></figure>   <p>ZzfxM was developed to create music for size-limited productions (i.e. js13k Games). The song format is loosely based on the tracker MOD format, using sequences of repeating patterns to create long songs from small chunks of music data.
+</code></pre><figcaption>The ZzFXM song generator function &mdash; 442 bytes (gzip)</figcaption></figure>   <p>ZzFXM was developed to create music for size-limited productions (i.e. js13k Games). The song format is loosely based on the tracker MOD format, using sequences of repeating patterns to create long songs from small chunks of music data.
   Songs are <em>highly</em> compressible. Once gzipped they're tiny — typically, a few hundred bytes.</p>
 
 
@@ -47,7 +47,7 @@ zzfxM=(n,f,t,e=125)=&gt;{let l,o,z,r,g,h,x,a,u,c,d,i,m,p,G,M=0,R=[],b=[],j=[],k=
 
 const buffer = zzfxM(...songData);    // Generate the sample data
 const node = zzfxP(...buffer);        // Play the song
-</code></pre><figcaption>Example code</figcaption></figure>
+</code></pre><figcaption>Example showing typical song generation code</figcaption></figure>
 <ul class="notes">
     <li id="note-code-1">[1] The modifications allow ZzFX to create an array of audio data without immediately playing it.</li>
   </ul>
@@ -194,14 +194,14 @@ const node = zzfxP(...buffer);        // Play the song
   <p>The original ZzFX library provides a single function to generate and play sounds. For ZzFXM to be able to create and mix instrument samples, this function had to be split into a separate generator (<code>zzfxG</code>) and player (<code>zzfxP</code>). As a result you can now pre-build and cache ZzFX sounds and play them later, saving the CPU cost of regenerating the sample every time a sound is played. If you need to, you can still call <code>zzfx()</code> directly.
 
   <figure class="codeblock"><pre><code class="language-js">// Build an explosion sound for use later
-const lazer = zzfxG(...[,,333,.01,0,.9,4,1.9,,,,,,.5,,.6]);
+const explosion = zzfxG(...[,,333,.01,0,.9,4,1.9,,,,,,.5,,.6]);
 
 // Later, play the sound
-if (player.fire) {
-  zzfxP(...lazer);
+if (player.hit(enemy)) {
+  zzfxP(explosion);
 }</code></pre><figcaption>Example showing how to use cached ZzFX sounds</figcaption></figure></section>
 
-
+</main>
 <footer class="section padSmall full-bleed" id="foot">
   ZzFXM was developed by <a href="https://keithclark.co.uk">Keith Clark</a>. Please see the <a href="https://github.com/keithclark/ZzFXM">GitHub repo</a> for more details.
 </footer>
