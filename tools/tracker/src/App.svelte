@@ -51,6 +51,10 @@
     currentPlaybackPosition.set(-1);
   }
 
+  $: if ($patterns[$selectedPattern] && $patterns[$selectedPattern][$selectedChannel]) {
+    selectedInstrument.set($patterns[$selectedPattern][$selectedChannel][0]);
+  }
+
   const loadSong = (loader, src) => {
     stopSong();
     return loader(src)
@@ -199,9 +203,6 @@
     loadSong(loadSongFromUrl, params.get('url'));
   }
 
-  $: if ($patterns[$selectedPattern][$selectedChannel]) {
-    selectedInstrument.set($patterns[$selectedPattern][$selectedChannel][0]);
-  }
 </script>
 
 <main>
