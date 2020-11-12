@@ -225,14 +225,16 @@ export const adjustAttenuation = (pattern, channel, row, step) => {
     const channelRows = patterns[pattern][channel];
     const note = channelRows[row + 2] | 0;
     const attenuation = round(channelRows[row + 2] % 1, 2);
-    channelRows[row + 2] = note + clamp(attenuation + step, 0, .99);
+    if (note >= 0) {
+      channelRows[row + 2] = note + clamp(attenuation + step, 0, .99);
+    }
     return patterns;
   });
 };
 
 
 /**
- * Set a note
+ * Set a note. If a note-release value is set the current attenuation is cleared
  *
  * @param {number} pattern - Index of the pattern containing the note to update
  * @param {number} channel - Index of the channel containing the note to update
@@ -242,7 +244,12 @@ export const adjustAttenuation = (pattern, channel, row, step) => {
 export const setNote = (pattern, channel, row, note) => {
   patterns.update(patterns => {
     const channelRows = patterns[pattern][channel];
-    const currentAttenuation = round(channelRows[row + 2] % 1, 2);
+    let currentAttenuation;
+    if (note < 0) {
+      currentAttenuation = 0;
+    } else {
+      currentAttenuation = round(channelRows[row + 2] % 1, 2);
+    }
     channelRows[row + 2] = note + currentAttenuation;
     return patterns;
   });
