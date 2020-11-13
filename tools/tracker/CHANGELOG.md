@@ -1,3 +1,9 @@
+v1.0.6b (13th Nov. 2020)
+
+* Fixed issue causing app to crash when loading a new song that doesn't fulfill the current selections
+* Fixed issue allowing attenuation adjustment on note-release
+* Fixed attenuation not being reset when setting from a note to note-release
+
 v1.0.5b (20th Oct. 2020)
 
 * Instrument editor selection now switches to match the currently selected track
