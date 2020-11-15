@@ -23,7 +23,7 @@ export let piano = false;
 let channelClipboard;
 let patternClipboard;
 
-$: patternCount = $patterns.length;
+$: patternCount = $patterns.length - 1;
 $: channelCount = $patterns[selectedPattern].length;
 $: selectedPattern = clamp(selectedPattern, 0, $patterns.length - 1);
 $: selectedChannel = clamp(selectedChannel, 0, $patterns[selectedPattern].length - 1);
