@@ -236,6 +236,13 @@ const mixChannelSampleData = (channel, start, length, leftChannelData, rightChan
       if (channel.offset > sampleLength - 99) {
         attenuation += 1 / 99;
       }
+
+      // clamp upper attentuation value to `1` or we may introduce unwanted
+      // clicking.
+      if (attenuation > 1) {
+        attenuation = 1;
+      }
+
       const data = (1 - attenuation) * sample[channel.offset | 0] || 0;
       leftChannelData[i] += -data * panning + data;
       rightChannelData[i] += data * panning + data;
