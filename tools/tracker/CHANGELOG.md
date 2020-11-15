@@ -1,8 +1,11 @@
-v1.0.6b (13th Nov. 2020)
+v1.0.6b (15th Nov. 2020)
 
 * Fixed issue causing app to crash when loading a new song that doesn't fulfill the current selections
 * Fixed issue allowing attenuation adjustment on note-release
 * Fixed attenuation not being reset when setting from a note to note-release
+* Added sample caching service for the song renderer
+* Fixed issue with pattern index selection going out of bounds
+* Fixed issue with attenuation level roll-off
 
 v1.0.5b (20th Oct. 2020)
 
