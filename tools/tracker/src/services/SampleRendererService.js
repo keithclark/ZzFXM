@@ -18,7 +18,6 @@ export const getSample = (instrument, note) => {
 
   let sample = instrumentNoteSamples.get(note);
   if (!sample) {
-    console.log(`Generating sample for instrument ${instrument}, note ${note}`);
     sample = renderNote(instrument, note);
     instrumentNoteSamples.set(note, sample)
   }
@@ -33,7 +32,6 @@ export const getSample = (instrument, note) => {
  * @param {number} instrument - The instrument to clear
  */
 export const clearSampleCacheForInstrument = instrument => {
-  console.log(`Clearing sample cache for instrument ${instrument}`);
   if (sampleCache.has(instrument)) {
     sampleCache.get(instrument).clear();
     return true;
@@ -46,7 +44,6 @@ export const clearSampleCacheForInstrument = instrument => {
  * Clear all instrument samples from the cache
  */
 export const clearSampleCache = () => {
-  console.log('Clearing sample cache');
   sampleCache.clear();
 };
 
