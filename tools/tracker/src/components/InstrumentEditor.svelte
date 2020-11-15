@@ -2,6 +2,7 @@
 import { instrumentsMeta, patterns, instruments } from '../stores.js';
 import { playNote } from '../services/RendererService.js';
 import { getNoteName } from '../services/PatternService.js';
+import { clearSampleCacheForInstrument } from '../services/SampleRendererService.js';
 import { addInstrument, deleteInstrument, setInstrumentParams } from '../services/InstrumentService.js';
 import { decodeInstrument, encodeInstrument } from 'zzfxm-song-encoder';
 import { clamp } from '../lib/utils.js';
@@ -72,6 +73,7 @@ const handlePlayClick = () => {
 }
 
 const handleChange = async () => {
+  clearSampleCacheForInstrument(selected);
   if (playOnChange) {
     playTestNote(selected, testNote);
   }

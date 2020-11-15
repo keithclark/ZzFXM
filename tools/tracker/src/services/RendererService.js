@@ -16,6 +16,8 @@ import {
   songPlaying
 } from '../stores.js';
 
+import { getSample, renderNote } from './SampleRendererService.js';
+
 import {
   getCumlativeRowAtPosition,
   getSongLength
@@ -174,6 +176,7 @@ const next = () => {
   patts[pattern].forEach((channel, i) => {
     const data = channel[row + 2];
     if (data) {
+      const [instrument, panning] = channel;
       let note = data | 0;
       let attenuation = data % 1;
 
@@ -182,10 +185,13 @@ const next = () => {
           channels[i] = null
           return;
         }
+
+        const sample = getSample(instrument, note);
+
         channels[i] = {
-          panning: channel[1],
-          attenuation: attenuation,
-          sample: renderNote(channel[0], note),
+          panning,
+          attenuation,
+          sample,
           offset: 0
         }
       }
@@ -340,22 +346,6 @@ const audioCallback = event => {
     bufferRemaining -= beatDuration;
   }
 };
-
-
-/**
- * Generates the sample data for a note played with an instrument
- *
- * @param {number} instrument - Index of the instrument to play
- * @param {number} note - Index of the note to play
- * @returns {Array<number>} Sample data
- */
-export const renderNote = (instrument, note) => {
-  let instr = [...insts[instrument]];
-  instr[2] *= 2 ** ((note - 12) / 12);
-  return zzfxG(...instr);
-};
-
-
 
 
 /**
