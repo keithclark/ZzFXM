@@ -54,9 +54,9 @@ export const encodeInstrument = instrument => {
 
     // Frequency
     else if (i == 2) {
-      if (encoded == '220') {
-        encoded = '';
-      } else if (encoded == '') {
+      // For zzfx() the frequency defaults to 220, but this default is not supported by
+      // zzfxm() because it would need to be applied prior to shifting the pitch for a note
+      if (encoded == '') {
         encoded = '0';
       }
     }
