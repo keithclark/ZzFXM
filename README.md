@@ -141,12 +141,12 @@ Param | Description | Default | Min Value | Max Value
 -|-|-|-|-
 `volume` | Volume scale (percent) | 1 | -1000000000 | 1000000000
 `randomness` | How much to randomize frequency (percent Hz) | 0.05 | -1000000000 | 1000000000
-`frequency` | Frequency of sound (Hz) | 440 | -1000000000 | 1000000000
+`frequency` | Frequency of sound (Hz) | REQUIRED | -1000000000 | 1000000000
 `attack` | Attack time, how fast sound starts (seconds) | 0 | 0 | 3
 `sustain` | Sustain time, how long sound holds (seconds) | 0 | 0 | 3
-`release` | Release time, how fast sound fades out (seconds) | 0 | 0 | 3
+`release` | Release time, how fast sound fades out (seconds) | 0.1 | 0 | 3
 `shape` | Shape of the sound wave (0=sin, 1=triangle, 2=saw, 3=tan, 4=bit noise) | 0 | -|-
-`shapeCurve` | Squarenes of wave (0=square, 1=normal, 2=pointy) | 0 | 0 | 1000000000
+`shapeCurve` | Squarenes of wave (0=square, 1=normal, 2=pointy) | 1 | 0 | 1000000000
 `slide` | How much to slide frequency (kHz/s) | 0 | -1000000000 | 1000000000
 `deltaSlide` | How much to change slide (kHz/s/s) | 0 | -1000000000 | 1000000000
 `pitchJump` | Frequency of pitch jump (Hz) | 0 | -1000000000 | 1000000000
