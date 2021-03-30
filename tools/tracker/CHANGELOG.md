@@ -1,5 +1,6 @@
-v1.0.6b (15th Nov. 2020)
+v1.0.6b (31th Mar. 2021)
 
+* Update dependencies (svelte, rollup, terser)
 * Fixed issue causing app to crash when loading a new song that doesn't fulfill the current selections
 * Fixed issue allowing attenuation adjustment on note-release
 * Fixed attenuation not being reset when setting from a note to note-release
