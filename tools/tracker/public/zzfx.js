@@ -14,4 +14,4 @@ zzfxV=.3;
 zzfxR=44100;
 
 // zzfxX - the common audio context
-zzfxX=new(top.AudioContext||webkitAudioContext);
+zzfxX=new(window.AudioContext||webkitAudioContext);
