@@ -117,8 +117,10 @@
 
     if (key === 'ArrowLeft') {
       $selectedChannel--;
+      event.preventDefault();
     } else if (key === 'ArrowRight') {
       $selectedChannel++;
+      event.preventDefault();
     } else if (key === 'ArrowUp') {
       if (altKey) {
         const step = shiftKey ? ATTENUATION_COARSE_STEP : ATTENUATION_FINE_STEP;
@@ -127,6 +129,7 @@
         const step = shiftKey ? PATTERN_ROW_COARSE_STEP : PATTERN_ROW_FINE_STEP;
         $selectedRow = Math.max(0, $selectedRow - step);
       }
+      event.preventDefault();
     } else if (key === 'ArrowDown') {
       if (altKey) {
         const step = shiftKey ? ATTENUATION_COARSE_STEP : ATTENUATION_FINE_STEP;
@@ -135,8 +138,10 @@
         const step = shiftKey ? PATTERN_ROW_COARSE_STEP : PATTERN_ROW_FINE_STEP;
         $selectedRow = Math.min($patterns[$selectedPattern][0].length - 3, $selectedRow + step);
       }
+      event.preventDefault();
     } else if (key === ' ') {
       setNote($selectedPattern, $selectedChannel, $selectedRow, -1);
+      event.preventDefault();
     } else if (key === 'Backspace') {
       event.preventDefault();
       setNote($selectedPattern, $selectedChannel, $selectedRow, 0);
@@ -162,6 +167,7 @@
       if (note) {
         setNote($selectedPattern, $selectedChannel, $selectedRow, note);
         playNote($patterns[$selectedPattern][$selectedChannel][0] || 0, note);
+        event.preventDefault();
       }
     }
   }
